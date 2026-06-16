@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive IFP Strategy Dashboard 2026</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700&family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Urbanist', 'Noto Sans Thai', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#030712',
+                            card: '#0f172a',
+                            border: '#1e293b',
+                            accent: '#06b6d4',
+                            accentHover: '#0891b2',
+                            success: '#10b981',
+                            danger: '#ef4444',
+                            warning: '#f59e0b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #030712;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        /* เอฟเฟกต์ Glow ตกแต่งพื้นหลัง */
+        .glow-bg {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="font-sans min-height-screen flex flex-col">
+
+    <!-- 1. แผงควบคุมหลักและส่วนหัวที่สลับภาษาได้จริง -->
+    <header class="bg-brand-card border-b border-brand-border h-16 w-full flex items-center justify-between px-6 md:px-12 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-square-poll-vertical text-brand-accent text-2xl"></i>
+            <span class="font-bold text-lg md:text-xl tracking-wide text-white" data-i18n="nav_title">SMART OFFICE 2026</span>
+            <span class="text-xs bg-brand-border text-brand-accent px-2 py-0.5 rounded-full font-bold" data-i18n="nav_tag">EXECUTIVE</span>
+        </div>
+        
+        <!-- ปุ่ม Switch แปล 3 ภาษาแบบทำงานได้จริง -->
+        <div class="flex items-center gap-2">
+            <button onclick="setLanguage('th')" id="btn-lang-th" class="lang-btn px-3 py-1 text-xs font-bold rounded border transition-all bg-brand-accent text-white border-brand-accent">TH</button>
+            <button onclick="setLanguage('jp')" id="btn-lang-jp" class="lang-btn px-3 py-1 text-xs font-bold rounded border transition-all bg-transparent text-gray-400 border-brand-border hover:border-gray-500">JP</button>
+            <button onclick="setLanguage('en')" id="btn-lang-en" class="lang-btn px-3 py-1 text-xs font-bold rounded border transition-all bg-transparent text-gray-400 border-brand-border hover:border-gray-500">EN</button>
+        </div>
+    </header>
+
+    <div class="flex flex-1 relative">
+        <div class="glow-bg"></div>
+
+        <!-- 2. SIDEBAR เมนูสลับหน้าจอวิเคราะห์ (Tabs Switcher) -->
+        <aside class="bg-brand-card border-r border-brand-border w-20 md:w-64 flex flex-col py-6 items-center md:items-stretch gap-2 z-10 shrink-0">
+            <div class="px-4 mb-4 hidden md:block">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-i18n="menu_header">STRATEGIC VIEWS</p>
+            </div>
+            
+            <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn w-full flex items-center justify-center md:justify-start gap-4 px-4 py-3 text-brand-accent border-l-4 border-brand-accent bg-brand-border/30 transition-all">
+                <i class="fa-solid fa-chart-pie text-xl w-6"></i>
+                <span class="hidden md:inline font-semibold text-sm" data-i18n="tab_overview">Overview Dashboard</span>
+            </button>
+            
+            <button onclick="switchTab('whys')" id="tab-whys" class="tab-btn w-full flex items-center justify-center md:justify-start gap-4 px-4 py-3 text-gray-400 border-l-4 border-transparent hover:bg-brand-border/20 transition-all">
+                <i class="fa-solid fa-magnifying-glass-chart text-xl w-6"></i>
+                <span class="hidden md:inline font-semibold text-sm" data-i18n="tab_whys">5 Whys Analysis</span>
+            </button>
+            
+            <button onclick="switchTab('brands')" id="tab-brands" class="tab-btn w-full flex items-center justify-center md:justify-start gap-4 px-4 py-3 text-gray-400 border-l-4 border-transparent hover:bg-brand-border/20 transition-all">
+                <i class="fa-solid fa-layer-group text-xl w-6"></i>
+                <span class="hidden md:inline font-semibold text-sm" data-i18n="tab_brands">Brand Tiers</span>
+            </button>
+            
+            <button onclick="switchTab('tco')" id="tab-tco" class="tab-btn w-full flex items-center justify-center md:justify-start gap-4 px-4 py-3 text-gray-400 border-l-4 border-transparent hover:bg-brand-border/20 transition-all">
+                <i class="fa-solid fa-snowflake text-xl w-6"></i>
+                <span class="hidden md:inline font-semibold text-sm" data-i18n="tab_tco">TCO Iceberg Simulator</span>
+            </button>
+            
+            <button onclick="switchTab('sizing')" id="tab-sizing" class="tab-btn w-full flex items-center justify-center md:justify-start gap-4 px-4 py-3 text-gray-400 border-l-4 border-transparent hover:bg-brand-border/20 transition-all">
+                <i class="fa-solid fa-expand text-xl w-6"></i>
+                <span class="hidden md:inline font-semibold text-sm" data-i18n="tab_sizing">Sizing & Standards</span>
+            </button>
+
+            <button onclick="switchTab('timeline')" id="tab-timeline" class="tab-btn w-full flex items-center justify-center md:justify-start gap-4 px-4 py-3 text-gray-400 border-l-4 border-transparent hover:bg-brand-border/20 transition-all">
+                <i class="fa-solid fa-clock-rotate-left text-xl w-6"></i>
+                <span class="hidden md:inline font-semibold text-sm" data-i18n="tab_timeline">Delivery Timeline</span>
+            </button>
+
+            <button onclick="switchTab('decision')" id="tab-decision" class="tab-btn w-full flex items-center justify-center md:justify-start gap-4 px-4 py-3 text-gray-400 border-l-4 border-transparent hover:bg-brand-border/20 transition-all">
+                <i class="fa-solid fa-sitemap text-xl w-6"></i>
+                <span class="hidden md:inline font-semibold text-sm" data-i18n="tab_decision">Decision Wizard</span>
+            </button>
+        </aside>
+
+        <!-- 3. MAIN WORKSPACE AREA -->
+        <main class="flex-1 p-6 md:p-10 z-10 overflow-y-auto max-w-full">
+            
+            <!-- VIEW A: OVERVIEW DASHBOARD -->
+            <section id="view-overview" class="content-section flex flex-col gap-6">
+                <div class="flex flex-col gap-1">
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white" data-i18n="ov_title">Executive IFP Transformation</h1>
+                    <p class="text-gray-400 text-sm md:text-base" data-i18n="ov_desc">สถิติและข้อมูลเพื่อการเปลี่ยนผ่านจากโปรเจคเตอร์แบบเดิมสู่ระบบกระดานอัจฉริยะ (Seamless Collaboration)</p>
+                </div>
+
+                <!-- สถิติการใช้งานด่วน (Quick Stats Grid) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-brand-card p-5 rounded-xl border border-brand-border flex items-center gap-4">
+                        <div class="p-3 bg-brand-accent/10 text-brand-accent rounded-lg text-2xl"><i class="fa-solid fa-heart"></i></div>
+                        <div>
+                            <span class="text-2xl font-bold text-white block">95%</span>
+                            <span class="text-xs text-gray-400" data-i18n="stat_satisfaction">User Satisfaction Rate</span>
+                        </div>
+                    </div>
+                    <div class="bg-brand-card p-5 rounded-xl border border-brand-border flex items-center gap-4">
+                        <div class="p-3 bg-brand-success/10 text-brand-success rounded-lg text-2xl"><i class="fa-solid fa-bolt"></i></div>
+                        <div>
+                            <span class="text-2xl font-bold text-white block">-25%</span>
+                            <span class="text-xs text-gray-400" data-i18n="stat_setup">Meeting Setup Time</span>
+                        </div>
+                    </div>
+                    <div class="bg-brand-card p-5 rounded-xl border border-brand-border flex items-center gap-4">
+                        <div class="p-3 bg-brand-warning/10 text-brand-warning rounded-lg text-2xl"><i class="fa-solid fa-tv"></i></div>
+                        <div>
+                            <span class="text-2xl font-bold text-white block">4K UHD</span>
+                            <span class="text-xs text-gray-400" data-i18n="stat_resolution">Visual Resolution Standard</span>
+                        </div>
+                    </div>
+                    <div class="bg-brand-card p-5 rounded-xl border border-brand-border flex items-center gap-4">
+                        <div class="p-3 bg-brand-danger/10 text-brand-danger rounded-lg text-2xl"><i class="fa-solid fa-user-shield"></i></div>
+                        <div>
+                            <span class="text-2xl font-bold text-white block">69-108kg</span>
+                            <span class="text-xs text-gray-400" data-i18n="stat_weight">Unit Panel Weight Risk</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- กราฟปัญหาและเปรียบเทียบ -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border lg:col-span-2 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-4" data-i18n="ov_graph_title">Problem Proportion in Legacy Systems</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span data-i18n="prob_software">Software Glitches / Compatibility</span>
+                                        <span class="font-bold text-brand-danger">45%</span>
+                                    </div>
+                                    <div class="w-full bg-brand-border h-3 rounded-full overflow-hidden">
+                                        <div class="bg-brand-danger h-full rounded-full" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span data-i18n="prob_physical">Physical Damage & Wear (Projector Bulbs)</span>
+                                        <span class="font-bold text-brand-warning">30%</span>
+                                    </div>
+                                    <div class="w-full bg-brand-border h-3 rounded-full overflow-hidden">
+                                        <div class="bg-brand-warning h-full rounded-full" style="width: 30%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span data-i18n="prob_maintenance">Delayed Maintenance / Support</span>
+                                        <span class="font-bold text-brand-accent">25%</span>
+                                    </div>
+                                    <div class="w-full bg-brand-border h-3 rounded-full overflow-hidden">
+                                        <div class="bg-brand-accent h-full rounded-full" style="width: 25%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-brand-border text-xs text-gray-400 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-brand-accent text-sm"></i>
+                            <span data-i18n="ov_graph_footer">ข้อมูลวิเคราะห์สถิติจริงจากอัตราคำร้องขอรับบริการบำรุงรักษาอุปกรณ์ของฝ่าย IT</span>
+                        </div>
+                    </div>
+
+                    <!-- การวิเคราะห์ปัญหาเดิม -->
+                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-2" data-i18n="ov_legacy_title">The Old One-Way Presentation</h3>
+                            <p class="text-xs text-gray-400 mb-4" data-i18n="ov_legacy_desc">ปัญหาที่พบบ่อยจากเครื่องฉายและโปรเจคเตอร์แบบเดิม</p>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex gap-2 items-start text-gray-300">
+                                    <i class="fa-solid fa-circle-xmark text-brand-danger mt-1"></i>
+                                    <span data-i18n="legacy_point_1">เงาบังหน้าจอขณะยืนบรรยาย (Shadow Interruption)</span>
+                                </li>
+                                <li class="flex gap-2 items-start text-gray-300">
+                                    <i class="fa-solid fa-circle-xmark text-brand-danger mt-1"></i>
+                                    <span data-i18n="legacy_point_2">หลอดภาพเสื่อมความสว่างและสีเพี้ยน (Bulb Decay)</span>
+                                </li>
+                                <li class="flex gap-2 items-start text-gray-300">
+                                    <i class="fa-solid fa-circle-xmark text-brand-danger mt-1"></i>
+                                    <span data-i18n="legacy_point_3">ต้องปิดไฟให้ห้องมืดสนิทเพื่อความชัดเจน (Darkroom Req.)</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <button onclick="switchTab('whys')" class="mt-6 w-full py-2.5 bg-brand-accent/10 border border-brand-accent/20 text-brand-accent rounded-lg text-xs font-semibold hover:bg-brand-accent hover:text-white transition-all flex items-center justify-center gap-2">
+                            <span data-i18n="ov_btn_analyze">วิเคราะห์สาเหตุด้วย 5 Whys ต่อไป</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW B: 5 WHYS ROOT CAUSE ANALYSIS -->
+            <section id="view-whys" class="content-section hidden flex flex-col gap-6">
+                <div class="flex flex-col gap-1">
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white" data-i18n="whys_title">Root Cause Analysis</h1>
+                    <p class="text-gray-400 text-sm md:text-base" data-i18n="whys_desc">วิเคราะห์หาสาเหตุที่แท้จริงเบื้องหลังประสิทธิภาพการสื่อสารในห้องประชุมที่ลดลง</p>
+                </div>
+
+                <!-- การ์ดโต้ตอบเชิงลึกแบบ 5 Whys -->
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
+                    <div class="lg:col-span-3 flex flex-col gap-3">
+                        <div class="bg-brand-card p-4 rounded-xl border border-brand-border flex gap-4 items-start relative overflow-hidden">
+                            <span class="text-xl font-bold text-brand-accent/60 w-10">P.</span>
+                            <div>
+                                <h4 class="font-bold text-white text-sm" data-i18n="why_p_title">The Symptom / Problem</h4>
+                                <p class="text-xs text-gray-400 mt-1" data-i18n="why_p_desc">การสื่อสารในห้องประชุมล่าช้า มี Friction สูงและไม่มีประสิทธิภาพ</p>
+                            </div>
+                        </div>
+                        <div class="bg-brand-card p-4 rounded-xl border border-brand-border flex gap-4 items-start">
+                            <span class="text-xl font-bold text-brand-accent/60 w-10">W1</span>
+                            <div>
+                                <h4 class="font-bold text-white text-sm" data-i18n="why_w1_title">Why? (พนักงานมีส่วนร่วมต่ำ)</h4>
+                                <p class="text-xs text-gray-400 mt-1" data-i18n="why_w1_desc">เพราะการนำเสนอเป็นลักษณะสื่อสารทางเดียว (One-way) พนักงานแชร์เนื้อหาและเขียนโต้ตอบพร้อมกันไม่ได้</p>
+                            </div>
+                        </div>
+                        <div class="bg-brand-card p-4 rounded-xl border border-brand-border flex gap-4 items-start">
+                            <span class="text-xl font-bold text-brand-accent/60 w-10">W2</span>
+                            <div>
+                                <h4 class="font-bold text-white text-sm" data-i18n="why_w2_title">Why? (มองไม่เห็นเนื้อหาชัดเจน)</h4>
+                                <p class="text-xs text-gray-400 mt-1" data-i18n="why_w2_desc">เพราะจอโปรเจคเตอร์แบบเดิมมีความสว่างและคอนทราสต์ต่ำ หากเปิดไฟในห้องสีจะซีดจาง และมีเงาคนบังหน้าจอ</p>
+                            </div>
+                        </div>
+                        <div class="bg-brand-card p-4 rounded-xl border border-brand-border flex gap-4 items-start">
+                            <span class="text-xl font-bold text-brand-accent/60 w-10">W3</span>
+                            <div>
+                                <h4 class="font-bold text-white text-sm" data-i18n="why_w3_title">Why? (ระบบไม่มีความสามารถโต้ตอบ)</h4>
+                                <p class="text-xs text-gray-400 mt-1" data-i18n="why_w3_desc">เพราะเทคโนโลยีที่ใช้งานเป็นอุปกรณ์ฉายภาพแบบอนาล็อกทั่วไป ขาดอินเทอร์เฟซซอฟต์แวร์และการรับสัมผัส (Touch) แบบดิจิทัล</p>
+                            </div>
+                        </div>
+                        <div class="bg-brand-card p-4 rounded-xl border border-brand-border flex gap-4 items-start">
+                            <span class="text-xl font-bold text-brand-accent/60 w-10">W4</span>
+                            <div>
+                                <h4 class="font-bold text-white text-sm" data-i18n="why_w4_title">Why? (เน้นจัดซื้อแต่ราคาหน้าป้ายฮาร์ดแวร์ต่ำ)</h4>
+                                <p class="text-xs text-gray-400 mt-1" data-i18n="why_w4_desc">เพราะนโยบายจัดซื้อในอดีตมุ่งเน้นตัวเงินแรกเข้า (LCC/Initial Cost) ของฮาร์ดแวร์ โดยไม่ได้พิจารณาระบบนิเวศทางซอฟต์แวร์</p>
+                            </div>
+                        </div>
+                        <div class="bg-brand-accent/10 p-5 rounded-xl border border-brand-accent/30 flex gap-4 items-start">
+                            <span class="text-xl font-bold text-brand-accent w-10"><i class="fa-solid fa-key"></i></span>
+                            <div>
+                                <h4 class="font-bold text-brand-accent text-sm" data-i18n="why_rc_title">ROOT CAUSE (สาเหตุที่แท้จริง)</h4>
+                                <p class="text-xs text-white mt-1 leading-relaxed" data-i18n="why_rc_desc">ขาดการวางแผนงบประมาณ TCO (Total Cost of Ownership) และกลยุทธ์ด้านระบบนิเวศการทำงานร่วมกันแบบดิจิทัล (Digital Collaboration Ecosystem)</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-2 bg-brand-card p-6 rounded-xl border border-brand-border flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-white" data-i18n="whys_insight_title">SLA & Weight Risk Relation</h3>
+                            <p class="text-sm text-gray-400 leading-relaxed" data-i18n="whys_insight_desc">
+                                จอกระดานอัจฉริยะ (IFP) มีขนาดใหญ่และน้ำหนักสูงมาก (69-108 กิโลกรัม) หากจัดซื้อโดยปราศจากสัญญาบริการระดับผู้เชี่ยวชาญ (White Glove SLA) ฝ่าย IT ขององค์กรจะมีความเสี่ยงสูงต่ออุบัติเหตุและการเคลมเปลี่ยนเครื่องที่ล่าช้าเมื่อมีข้อขัดข้องทางเทคนิค
+                            </p>
+                        </div>
+                        <div class="p-4 bg-brand-dark rounded-lg border border-brand-border mt-4">
+                            <div class="flex items-center gap-3 text-brand-warning mb-2">
+                                <i class="fa-solid fa-circle-exclamation text-xl"></i>
+                                <span class="font-bold text-sm" data-i18n="whys_alert_title">ความเสี่ยงของการซ่อมบำรุงเอง</span>
+                            </div>
+                            <p class="text-xs text-gray-400 leading-relaxed" data-i18n="whys_alert_desc">การถอดและประกอบจอกระดานอัจฉริยะที่มีน้ำหนักกว่าร้อยกิโลกรัมโดยผู้ไม่มีความเชี่ยวชาญ อาจทำให้หน้าจอร้าวหรือเกิดความเสียหายต่อพนักงานได้อย่างง่ายดาย</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW C: BRAND LANDSCAPE WITH ACTIVE FILTERS -->
+            <section id="view-brands" class="content-section hidden flex flex-col gap-6">
+                <div class="flex flex-col gap-1">
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white" data-i18n="brand_title">Brand Landscape & Pricing Matrix</h1>
+                    <p class="text-gray-400 text-sm md:text-base" data-i18n="brand_desc">วิเคราะห์ข้อมูลการเปรียบเทียบแบรนด์ตามระดับเซกเมนต์และการวิเคราะห์ราคาตลาดประเทศไทย</p>
+                </div>
+
+                <!-- ตัวกรอง Tier แบรนด์ (Active Filter Buttons) -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterBrands('all')" id="btn-filter-all" class="filter-btn px-4 py-1.5 text-xs font-semibold rounded-full bg-brand-accent text-white transition-all">All Tiers</button>
+                    <button onclick="filterBrands('tier1')" id="btn-filter-tier1" class="filter-btn px-4 py-1.5 text-xs font-semibold rounded-full bg-brand-border text-gray-300 hover:bg-brand-card transition-all">Tier 1: Premium</button>
+                    <button onclick="filterBrands('tier2')" id="btn-filter-tier2" class="filter-btn px-4 py-1.5 text-xs font-semibold rounded-full bg-brand-border text-gray-300 hover:bg-brand-card transition-all">Tier 2: Standard</button>
+                    <button onclick="filterBrands('tier3')" id="btn-filter-tier3" class="filter-btn px-4 py-1.5 text-xs font-semibold rounded-full bg-brand-border text-gray-300 hover:bg-brand-card transition-all">Tier 3: Value</button>
+                </div>
+
+                <!-- ตารางเปรียบเทียบแบรนด์แบบ Dynamic Dynamic Dynamic -->
+                <div class="bg-brand-card rounded-xl border border-brand-border overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-brand-border/40 text-brand-accent text-xs uppercase tracking-wider">
+                                <th class="p-4" data-i18n="tbl_col_segment">Segment / Tier</th>
+                                <th class="p-4" data-i18n="tbl_col_size55">55 Inch Range</th>
+                                <th class="p-4" data-i18n="tbl_col_size65">65 Inch Range</th>
+                                <th class="p-4" data-i18n="tbl_col_size75">75 Inch Range</th>
+                                <th class="p-4" data-i18n="tbl_col_features">Core Focus / Security</th>
+                            </tr>
+                        </thead>
+                        <tbody id="brand-table-body" class="divide-y divide-brand-border text-sm">
+                            <!-- แถวที่ 1 (Premium) -->
+                            <tr class="brand-row tier1 transition-all">
+                                <td class="p-4 font-bold text-white">
+                                    <span class="block text-brand-warning text-xs font-bold mb-1">TIER 1</span>
+                                    Premium Segment
+                                    <span class="block text-xs text-gray-400 font-normal">Microsoft / SMART Board</span>
+                                </td>
+                                <td class="p-4 text-gray-300">130k - 200k THB</td>
+                                <td class="p-4 text-gray-300">190k - 250k THB</td>
+                                <td class="p-4 text-gray-300">250k - 490k+ THB</td>
+                                <td class="p-4 text-xs text-gray-400">เน้นความปลอดภัยสูงสุด (Enterprise Security) และระบบนิเวศซอฟต์แวร์เฉพาะด้านสูง</td>
+                            </tr>
+                            <!-- แถวที่ 2 (Standard) -->
+                            <tr class="brand-row tier2 transition-all">
+                                <td class="p-4 font-bold text-white">
+                                    <span class="block text-brand-accent text-xs font-bold mb-1">TIER 2</span>
+                                    Standard Corporate
+                                    <span class="block text-xs text-gray-400 font-normal">Samsung / ViewSonic / Promethean</span>
+                                </td>
+                                <td class="p-4 text-gray-300">85k - 130k THB</td>
+                                <td class="p-4 text-gray-300">90k - 150k THB</td>
+                                <td class="p-4 text-gray-300">160k - 220k THB</td>
+                                <td class="p-4 text-xs text-gray-400">สเปกและฟีเจอร์ที่สมดุล เป็นที่นิยมอย่างสูงในกลุ่มสถาบันการศึกษาและห้องประชุมทั่วไป</td>
+                            </tr>
+                            <!-- แถวที่ 3 (Value) -->
+                            <tr class="brand-row tier3 transition-all">
+                                <td class="p-4 font-bold text-white">
+                                    <span class="block text-brand-success text-xs font-bold mb-1">TIER 3</span>
+                                    Value Leader
+                                    <span class="block text-xs text-gray-400 font-normal">HKMLC / GYGAR / Maxhub</span>
+                                </td>
+                                <td class="p-4 text-gray-300">45k - 66k THB</td>
+                                <td class="p-4 text-gray-300">51.5k - 75k THB</td>
+                                <td class="p-4 text-gray-300">63k - 110k THB</td>
+                                <td class="p-4 text-xs text-gray-400">คุ้มค่าราคาสูง ฮาร์ดแวร์ประสิทธิภาพดีเทียบเคียงสเปกราคาแพงในราคาประหยัดกว่า 50%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-5 bg-brand-border/30 rounded-xl border border-brand-border flex items-center gap-3">
+                    <i class="fa-solid fa-circle-info text-brand-accent text-lg"></i>
+                    <p class="text-xs text-gray-400 leading-relaxed" data-i18n="brand_note">หมายเหตุ: ราคาคาดการณ์ข้างต้นอ้างอิงตามค่าเฉลี่ยสเปกในตลาดประเทศไทยปี 2026 ไม่รวมภาษีมูลค่าเพิ่ม 7% และสิทธิการอัปเกรดโมดูลคอมพิวเตอร์เสริม (OPS Module)</p>
+                </div>
+            </section>
+
+            <!-- VIEW D: TCO ICEBERG SIMULATOR (โต้ตอบเรียลไทม์) -->
+            <section id="view-tco" class="content-section hidden flex flex-col gap-6">
+                <div class="flex flex-col gap-1">
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white" data-i18n="tco_title">The TCO Iceberg Simulator</h1>
+                    <p class="text-gray-400 text-sm md:text-base" data-i18n="tco_desc">ประเมินสัดส่วนงบประมาณจริงของกระดานอัจฉริยะ (IFP) ที่มีต้นทุนแฝงใต้ภูเขาน้ำแข็งกว่า 30-50%</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- เครื่องมือเลื่อนปรับตัวเลขจำลอง -->
+                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border flex flex-col gap-6">
+                        <h3 class="text-lg font-semibold text-white" data-i18n="tco_input_header">Adjust Budget Variables</h3>
+                        
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-2" data-i18n="tco_slide_hw">Base Hardware Price (ราคาฮาร์ดแวร์ตัวเครื่อง)</label>
+                            <div class="flex gap-4 items-center">
+                                <input oninput="updateTCO()" type="range" id="tco-hw-range" min="45000" max="490000" step="5000" value="100000" class="flex-1 accent-brand-accent">
+                                <span id="tco-hw-val" class="font-bold text-xl text-brand-accent w-28 text-right">100,000</span>
+                                <span class="text-sm text-gray-400">THB</span>
+                            </div>
+                        </div>
+
+                        <!-- ตัวเลือกคอมพิวเตอร์ OPS และ Software -->
+                        <div class="space-y-3 pt-4 border-t border-brand-border">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input onchange="updateTCO()" type="checkbox" id="tco-opt-ops" checked class="w-4 h-4 rounded border-brand-border bg-brand-dark accent-brand-accent">
+                                <div class="text-sm">
+                                    <span class="block font-semibold text-white" data-i18n="tco_ops_title">Include Windows OPS Module (+35,000 THB)</span>
+                                    <span class="block text-xs text-gray-400" data-i18n="tco_ops_desc">เพิ่มคอมพิวเตอร์สเปกอุตสาหกรรมฝังในกระดานเพื่อระบบปฏิบัติการคู่ (Dual OS)</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input onchange="updateTCO()" type="checkbox" id="tco-opt-license" class="w-4 h-4 rounded border-brand-border bg-brand-dark accent-brand-accent">
+                                <div class="text-sm">
+                                    <span class="block font-semibold text-white" data-i18n="tco_license_title">Annual Specialized Software License (+12,000 THB)</span>
+                                    <span class="block text-xs text-gray-400" data-i18n="tco_license_desc">ลิขสิทธิ์ซอฟต์แวร์สนับสนุนเชิงลึกสำหรับภาคธุรกิจและการศึกษา</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- ผลลัพธ์การคำนวณ Real-time -->
+                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border flex flex-col justify-between">
+                        <h3 class="text-lg font-semibold text-white mb-4" data-i18n="tco_result_header">Real-time Budget breakdown</h3>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm py-1.5 border-b border-brand-border/30">
+                                <span class="text-gray-400" data-i18n="tco_row_hw">Visible Cost: Hardware Base</span>
+                                <span id="res-hw" class="font-bold text-white">100,000 THB</span>
+                            </div>
+                            <div class="flex justify-between text-sm py-1.5 border-b border-brand-border/30">
+                                <span class="text-gray-400" data-i18n="tco_row_install">Hidden Cost: Professional Install (15%)</span>
+                                <span id="res-install" class="font-bold text-brand-warning">15,000 THB</span>
+                            </div>
+                            <div class="flex justify-between text-sm py-1.5 border-b border-brand-border/30">
+                                <span class="text-gray-400" data-i18n="tco_row_ops">Hardware Option: Windows OPS</span>
+                                <span id="res-ops" class="font-bold text-brand-warning">35,000 THB</span>
+                            </div>
+                            <div class="flex justify-between text-sm py-1.5 border-b border-brand-border/30">
+                                <span class="text-gray-400" data-i18n="tco_row_training">Hidden Cost: Training & Adoption (10%)</span>
+                                <span id="res-training" class="font-bold text-brand-warning">10,000 THB</span>
+                            </div>
+                            <div class="flex justify-between text-sm py-1.5 border-b border-brand-border/30">
+                                <span class="text-gray-400" data-i18n="tco_row_license">Software Option: License Fee</span>
+                                <span id="res-license" class="font-bold text-brand-warning">0 THB</span>
+                            </div>
+                            <div class="flex justify-between items-center text-base py-3 font-bold border-t border-brand-border mt-4">
+                                <span class="text-brand-accent uppercase tracking-wider" data-i18n="tco_row_total">Total Cost of Ownership (TCO)</span>
+                                <span id="res-total" class="text-2xl text-brand-success">160,000 THB</span>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-gray-500 italic mt-4" data-i18n="tco_footer_warning">*ข้อเตือนใจ: หากฝ่ายจัดซื้อตัดงบประมาณ "การฝึกอบรมใช้งานพนักงาน" กระดานอัจฉริยะราคาหลักแสนจะกลายเป็นเพียงทีวีติดผนังราคาแพง</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW E: SIZING & THE 4-6-8 RULE CALCULATOR -->
+            <section id="view-sizing" class="content-section hidden flex flex-col gap-6">
+                <div class="flex flex-col gap-1">
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white" data-i18n="size_title">Room Sizing & 4-6-8 Sizing Standard</h1>
+                    <p class="text-gray-400 text-sm md:text-base" data-i18n="size_desc">เครื่องมือช่วยตรวจสอบความสูงหน้าจอที่จำเป็นสำหรับการใช้งานในห้องประชุมจริงตามมาตรฐานสากล</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- เครื่องคำนวณ Interactive -->
+                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border flex flex-col gap-6">
+                        <h3 class="text-lg font-semibold text-white" data-i18n="size_calc_header">Sizing Recommender</h3>
+                        
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-2" data-i18n="size_slide_depth">Max Viewing Distance (ระยะผู้ฟังหลังสุดของห้อง)</label>
+                            <div class="flex gap-4 items-center">
+                                <input oninput="calculateSizing()" type="range" id="size-depth-range" min="3" max="15" step="0.5" value="6" class="flex-1 accent-brand-accent">
+                                <span id="size-depth-val" class="font-bold text-xl text-brand-accent">6.0</span>
+                                <span class="text-sm text-gray-400">Meters</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-2" data-i18n="size_select_use">Application Type (ประเภทลักษณะไฟล์ที่นำเสนอ)</label>
+                            <select onchange="calculateSizing()" id="size-use-type" class="w-full bg-brand-dark border border-brand-border rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-brand-accent">
+                                <option value="analytical" selected>Analytical / Complex Text (ตาราง ข้อมูลวิเคราะห์ ตัวหนังสือเล็ก)</option>
+                                <option value="presentation">Standard Slides / Images (สไลด์ภาพประกอบ ตัวหนังสือใหญ่)</option>
+                                <option value="video">Simple Video / Collaboration (วิดีโอ การประชุมกลุ่ม)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ผลลัพธ์การแนะนำแบบ Dynamic -->
+                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-4" data-i18n="size_result_header">Best Fit Screen Size</h3>
+                            <div class="flex flex-col items-center justify-center p-6 bg-brand-dark rounded-xl border border-brand-border mb-4">
+                                <span id="rec-screen-size" class="text-6xl font-bold text-brand-accent">75"</span>
+                                <span class="text-xs text-gray-400 mt-2 tracking-widest uppercase" data-i18n="rec_screen_label">RECOMMENDED SCREEN SIZE</span>
+                            </div>
+                            <div class="space-y-2 text-sm text-gray-300">
+                                <p><strong data-i18n="rec_height">Screen Height Required:</strong> <span id="rec-h-text">0.93 m</span></p>
+                                <p><strong data-i18n="rec_max_distance">Max Viewing Standard:</strong> <span id="rec-rule-text">4x Height rule applied</span></p>
+                            </div>
+                        </div>
+                        <div class="pt-4 border-t border-brand-border text-xs text-gray-400">
+                            *อ้างอิงตามกฎสากล 4-6-8 Rule สำหรับการออกแบบสถาปัตยกรรมและเทคโนโลยีห้องโต้ตอบการสื่อสาร
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW F: RACING TIMELINE (10-Week Delivery Timeline) -->
+            <section id="view-timeline" class="content-section hidden flex flex-col gap-6">
+                <div class="flex flex-col gap-1">
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white" data-i18n="time_title">Racing Timeline: 10-Week Project Plan</h1>
+                    <p class="text-gray-400 text-sm md:text-base" data-i18n="time_desc">กรอบแผนงานกระบวนการจัดส่ง จัดซื้อ ตรวจรับ ตลอดจนฝึกอบรมผู้ใช้งานแบบสัมฤทธิ์ผล</p>
+                </div>
+
+                <!-- เส้นสเตป Timeline โต้ตอบเชิงลึก -->
+                <div class="bg-brand-card p-6 rounded-xl border border-brand-border flex flex-col gap-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 relative z-10">
+                        <button onclick="showStep(1)" id="step-btn-1" class="step-btn p-3 bg-brand-accent/20 text-brand-accent rounded-lg border border-brand-accent/40 hover:bg-brand-accent/30 text-center transition-all">
+                            <span class="block font-bold text-sm">Step 1</span>
+                            <span class="text-[10px] text-gray-300">Research</span>
+                        </button>
+                        <button onclick="showStep(2)" id="step-btn-2" class="step-btn p-3 bg-brand-border text-gray-400 rounded-lg border border-brand-border hover:bg-brand-border/60 text-center transition-all">
+                            <span class="block font-bold text-sm">Step 2</span>
+                            <span class="text-[10px] text-gray-300">Evaluation</span>
+                        </button>
+                        <button onclick="showStep(3)" id="step-btn-3" class="step-btn p-3 bg-brand-border text-gray-400 rounded-lg border border-brand-border hover:bg-brand-border/60 text-center transition-all">
+                            <span class="block font-bold text-sm">Step 3</span>
+                            <span class="text-[10px] text-gray-300">Comparison</span>
+                        </button>
+                        <button onclick="showStep(4)" id="step-btn-4" class="step-btn p-3 bg-brand-border text-gray-400 rounded-lg border border-brand-border hover:bg-brand-border/60 text-center transition-all">
+                            <span class="block font-bold text-sm">Step 4</span>
+                            <span class="text-[10px] text-gray-300">Ordering</span>
+                        </button>
+                        <button onclick="showStep(5)" id="step-btn-5" class="step-btn p-3 bg-brand-border text-gray-400 rounded-lg border border-brand-border hover:bg-brand-border/60 text-center transition-all">
+                            <span class="block font-bold text-sm">Step 5</span>
+                            <span class="text-[10px] text-gray-300">Logistics</span>
+                        </button>
+                        <button onclick="showStep(6)" id="step-btn-6" class="step-btn p-3 bg-brand-border text-gray-400 rounded-lg border border-brand-border hover:bg-brand-border/60 text-center transition-all">
+                            <span class="block font-bold text-sm">Step 6</span>
+                            <span class="text-[10px] text-gray-300">Installation</span>
+                        </button>
+                        <button onclick="showStep(7)" id="step-btn-7" class="step-btn p-3 bg-brand-border text-gray-400 rounded-lg border border-brand-border hover:bg-brand-border/60 text-center transition-all">
+                            <span class="block font-bold text-sm">Step 7</span>
+                            <span class="text-[10px] text-gray-300">Acceptance</span>
+                        </button>
+                        <button onclick="showStep(8)" id="step-btn-8" class="step-btn p-3 bg-brand-border text-gray-400 rounded-lg border border-brand-border hover:bg-brand-border/60 text-center transition-all">
+                            <span class="block font-bold text-sm">Step 8</span>
+                            <span class="text-[10px] text-gray-300">Training</span>
+                        </button>
+                    </div>
+
+                    <!-- รายละเอียดโต้ตอบตามขั้นที่ถูกคลิก -->
+                    <div id="step-detail-card" class="p-6 bg-brand-dark rounded-lg border border-brand-border flex flex-col gap-2">
+                        <div class="flex items-center gap-3">
+                            <span id="step-badge" class="bg-brand-accent text-white font-bold text-xs px-2.5 py-1 rounded-full uppercase">Step 1</span>
+                            <h4 id="step-title" class="text-lg font-bold text-white">Define Research Requirements</h4>
+                        </div>
+                        <p id="step-desc" class="text-sm text-gray-400 mt-2">สำรวจความต้องการและประเมินแบรนด์ รวมถึงศึกษาความสอดคล้องตามโครงสร้างพื้นฐานขององค์กรดั้งเดิม (W1-W2)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW G: DECISION MATRIX WIZARD -->
+            <section id="view-decision" class="content-section hidden flex flex-col gap-6">
+                <div class="flex flex-col gap-1">
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white" data-i18n="dec_title">The Decision Wizard</h1>
+                    <p class="text-gray-400 text-sm md:text-base" data-i18n="dec_desc">เครื่องมือตอบคำถามแบบโต้ตอบเพื่อช่วยกำหนดกลยุทธ์การจัดซื้อที่เหมาะกับงบประมาณของหน่วยงานท่าน</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- แบบสำรวจความต้องการ -->
+                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border flex flex-col gap-4">
+                        <h3 class="text-lg font-semibold text-white" data-i18n="dec_header">Configure Your Situation</h3>
+                        
+                        <div>
+                            <span class="block text-xs text-gray-400 mb-2 font-bold" data-i18n="dec_q1">1. สภาพทีวีจอภาพเดิมในหน่วยงาน</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="p-3 border border-brand-border rounded-lg bg-brand-dark/50 cursor-pointer hover:border-brand-accent transition-all flex items-center gap-3">
+                                    <input type="radio" name="wiz-tv" value="yes" checked class="accent-brand-accent">
+                                    <span class="text-xs text-white" data-i18n="dec_q1_a1">มีจอทีวีคุณภาพดีอยู่แล้ว</span>
+                                </label>
+                                <label class="p-3 border border-brand-border rounded-lg bg-brand-dark/50 cursor-pointer hover:border-brand-accent transition-all flex items-center gap-3">
+                                    <input type="radio" name="wiz-tv" value="no" class="accent-brand-accent">
+                                    <span class="text-xs text-white" data-i18n="dec_q1_a2">ไม่มี/ใช้โปรเจคเตอร์เดิม</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="block text-xs text-gray-400 mb-2 font-bold" data-i18n="dec_q2">2. งบประมาณหลักสำหรับการปรับปรุงระบบ</span>
+                            <div class="grid grid-cols-3 gap-2">
+                                <label class="p-3 border border-brand-border rounded-lg bg-brand-dark/50 cursor-pointer hover:border-brand-accent transition-all flex flex-col items-center gap-1">
+                                    <input type="radio" name="wiz-budget" value="low" checked class="accent-brand-accent">
+                                    <span class="text-[10px] text-white">Strict/Low</span>
+                                </label>
+                                <label class="p-3 border border-brand-border rounded-lg bg-brand-dark/50 cursor-pointer hover:border-brand-accent transition-all flex flex-col items-center gap-1">
+                                    <input type="radio" name="wiz-budget" value="mid" class="accent-brand-accent">
+                                    <span class="text-[10px] text-white">Moderate</span>
+                                </label>
+                                <label class="p-3 border border-brand-border rounded-lg bg-brand-dark/50 cursor-pointer hover:border-brand-accent transition-all flex flex-col items-center gap-1">
+                                    <input type="radio" name="wiz-budget" value="high" class="accent-brand-accent">
+                                    <span class="text-[10px] text-white">Premium/High</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button onclick="evaluateDecision()" class="mt-4 w-full py-2.5 bg-brand-accent text-white font-semibold rounded-lg text-xs hover:bg-brand-accentHover transition-all">
+                            Submit Config for Strategy Recommendation
+                        </button>
+                    </div>
+
+                    <!-- ผลลัพธ์เชิงกลยุทธ์ -->
+                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-4" data-i18n="dec_result_title">Strategic Recommendation</h3>
+                            <div class="p-5 bg-brand-dark rounded-xl border border-brand-border">
+                                <span class="text-xs text-brand-accent font-bold uppercase tracking-widest block mb-1">Recommended Route</span>
+                                <h4 id="dec-rec-title" class="text-xl font-bold text-white mb-2">Retrofit Upgrade (Cybernetyx Galileo ONE)</h4>
+                                <p id="dec-rec-desc" class="text-xs text-gray-400 leading-relaxed">
+                                    แนะนำทางเลือกการอัปเกรดระบบจอภาพเดิมด้วยอุปกรณ์ตรวจจับสามมิติ ช่วยแปลงจอทั่วไปให้กลายเป็นระบบสัมผัสโต้ตอบอย่างรวดเร็วและคุ้มทุนที่สุด ประหยัดงบได้กว่า 60%
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-gray-500 italic mt-4">
+                            *ข้อมูลคำแนะนำถูกคำนวณตามดัชนีคะแนนถ่วงน้ำหนักความคุ้มค่า (Weighted Score Matrix)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- 4. FOOTER -->
+    <footer class="bg-brand-card border-t border-brand-border h-12 w-full flex items-center justify-between px-6 text-xs text-gray-500 z-10 shrink-0">
+        <div>© 2026 Executive Management Guide Dashboard. All Rights Reserved.</div>
+        <div class="flex items-center gap-4">
+            <span class="hover:text-gray-300 cursor-pointer"><i class="fa-solid fa-envelope"></i> contact@dsignage.co.th</span>
+            <span class="hover:text-gray-300 cursor-pointer"><i class="fa-solid fa-globe"></i> www.dsignage.co.th</span>
+        </div>
+    </footer>
+
+    <!-- 5. JAVASCRIPT TRANSLATION DICTIONARY AND INTERACTION LOGIC -->
+    <script>
+        // Dictionary ข้อมูลการแปล 3 ภาษาอย่างสมบูรณ์แบบ
+        const translations = {
+            th: {
+                nav_title: "สถิติและกลยุทธ์การจัดซื้อ IFP 2026",
+                nav_tag: "ผู้บริหาร",
+                menu_header: "มุมมองวิเคราะห์กลยุทธ์",
+                tab_overview: "ภาพรวมความคุ้มค่า",
+                tab_whys: "วิเคราะห์สาเหตุ (5 Whys)",
+                tab_brands: "แบรนด์และราคาตลาด",
+                tab_tco: "จำลองต้นทุนรวม (TCO)",
+                tab_sizing: "ระยะทาง & ขนาดห้อง",
+                tab_timeline: "แผนส่งมอบ 10 สัปดาห์",
+                tab_decision: "เครื่องมือเลือกกลยุทธ์",
+                
+                ov_title: "Executive IFP Transformation",
+                ov_desc: "สถิติและข้อมูลเพื่อการเปลี่ยนผ่านจากโปรเจคเตอร์แบบเดิมสู่ระบบกระดานอัจฉริยะ (Seamless Collaboration)",
+                stat_satisfaction: "ระดับความพึงพอใจผู้ใช้งาน",
+                stat_setup: "เวลาจัดเตรียมประชุมลดลง",
+                stat_resolution: "มาตรฐานสเต็ปความคมชัด",
+                stat_weight: "น้ำหนักเครื่องและสิทธิ์ความเสี่ยง",
+                ov_graph_title: "สัดส่วนของปัญหาดั้งเดิม (ความขัดข้องระบบ)",
+                prob_software: "บั๊กซอฟต์แวร์ / คอร์สความเข้ากันไม่ได้",
+                prob_physical: "ความเสื่อมสภาพกายภาพ (หลอดภาพเสื่อม)",
+                prob_maintenance: "การบริการและซ่อมบำรุงที่ล่าช้า",
+                ov_graph_footer: "ข้อมูลวิเคราะห์สถิติจริงจากอัตราคำร้องขอรับบริการบำรุงรักษาอุปกรณ์ของฝ่าย IT",
+                ov_legacy_title: "สไตล์เก่า: One-Way Presentation",
+                ov_legacy_desc: "ปัญหาที่พบบ่อยจากเครื่องฉายและโปรเจคเตอร์แบบเดิม",
+                legacy_point_1: "เงาบังหน้าจอขณะยืนบรรยาย (Shadow Interruption)",
+                legacy_point_2: "หลอดภาพเสื่อมความสว่างและสีเพี้ยน (Bulb Decay)",
+                legacy_point_3: "ต้องปิดไฟให้ห้องมืดสนิทเพื่อความชัดเจน (Darkroom Req.)",
+                ov_btn_analyze: "วิเคราะห์สาเหตุด้วย 5 Whys ต่อไป",
+                
+                whys_title: "Root Cause & 5 Whys Analysis",
+                whys_desc: "วิเคราะห์หาสาเหตุที่แท้จริงเบื้องหลังประสิทธิภาพการสื่อสารในห้องประชุมที่ลดลง",
+                why_p_title: "อาการ / ปัญหาหลัก",
+                why_p_desc: "การสื่อสารในห้องประชุมล่าช้า มี Friction สูงและไม่มีประสิทธิภาพ",
+                why_w1_title: "Why? (พนักงานมีส่วนร่วมต่ำ)",
+                why_w1_desc: "เพราะการนำเสนอเป็นลักษณะสื่อสารทางเดียว (One-way) พนักงานแชร์เนื้อหาและเขียนโต้ตอบพร้อมกันไม่ได้",
+                why_w2_title: "Why? (มองไม่เห็นเนื้อหาชัดเจน)",
+                why_w2_desc: "เพราะจอโปรเจคเตอร์แบบเดิมมีความสว่างและคอนทราสต์ต่ำ หากเปิดไฟในห้องสีจะซีดจาง และมีเงาคนบังหน้าจอ",
+                why_w3_title: "Why? (ระบบไม่มีความสามารถโต้ตอบ)",
+                why_w3_desc: "เพราะเทคโนโลยีที่ใช้งานเป็นอุปกรณ์ฉายภาพแบบอนาล็อกทั่วไป ขาดอินเทอร์เฟซซอฟต์แวร์และการรับสัมผัส (Touch) แบบดิจิทัล",
+                why_w4_title: "Why? (เน้นจัดซื้อแต่ราคาหน้าป้ายฮาร์ดแวร์ต่ำ)",
+                why_w4_desc: "เพราะนโยบายจัดซื้อในอดีตมุ่งเน้นตัวเงินแรกเข้า (LCC/Initial Cost) ของฮาร์ดแวร์ โดยไม่ได้พิจารณาระบบนิเวศทางซอฟต์แวร์",
+                why_rc_title: "ROOT CAUSE (สาเหตุที่แท้จริง)",
+                why_rc_desc: "ขาดการวางแผนงบประมาณ TCO (Total Cost of Ownership) และกลยุทธ์ด้านระบบนิเวศการทำงานร่วมกันแบบดิจิทัล (Digital Collaboration Ecosystem)",
+                whys_insight_title: "ความเชื่อมโยงกับ SLA และความเสี่ยงเรื่องน้ำหนักตัวเครื่อง",
+                whys_insight_desc: "จอกระดานอัจฉริยะ (IFP) มีขนาดใหญ่และน้ำหนักสูงมาก (69-108 กิโลกรัม) หากจัดซื้อโดยปราศจากสัญญาบริการระดับผู้เชี่ยวชาญ (White Glove SLA) ฝ่าย IT ขององค์กรจะมีความเสี่ยงสูงต่ออุบัติเหตุและการเคลมเปลี่ยนเครื่องที่ล่าช้าเมื่อมีข้อขัดข้องทางเทคนิค",
+                whys_alert_title: "ความเสี่ยงของการซ่อมบำรุงด้วยตัวเอง",
+                whys_alert_desc: "การถอดและประกอบจอกระดานอัจฉริยะที่มีน้ำหนักกว่าร้อยกิโลกรัมโดยผู้ไม่มีความเชี่ยวชาญ อาจทำให้หน้าจอร้าวหรือเกิดความเสียหายต่อพนักงานได้อย่างง่ายดาย",
+                
+                brand_title: "Brand Landscape & Pricing Matrix",
+                brand_desc: "วิเคราะห์ข้อมูลการเปรียบเทียบแบรนด์ตามระดับเซกเมนต์และการวิเคราะห์ราคาตลาดประเทศไทย",
+                tbl_col_segment: "กลุ่มแบรนด์ / เซกเมนต์",
+                tbl_col_size55: "ช่วงราคาขนาด 55 นิ้ว",
+                tbl_col_size65: "ช่วงราคาขนาด 65 นิ้ว",
+                tbl_col_size75: "ช่วงราคาขนาด 75 นิ้ว",
+                tbl_col_features: "การเน้นฟีเจอร์หลัก / ความปลอดภัย",
+                brand_note: "หมายเหตุ: ราคาคาดการณ์ข้างต้นอ้างอิงตามค่าเฉลี่ยสเปกในตลาดประเทศไทยปี 2026 ไม่รวมภาษีมูลค่าเพิ่ม 7% และสิทธิการอัปเกรดโมดูลคอมพิวเตอร์เสริม (OPS Module)",
+                
+                tco_title: "The TCO Iceberg Simulator",
+                tco_desc: "ประเมินสัดส่วนงบประมาณจริงของกระดานอัจฉริยะ (IFP) ที่มีต้นทุนแฝงใต้ภูเขาน้ำแข็งกว่า 30-50%",
+                tco_input_header: "ปรับงบประมาณและตัวแปรเพื่อคำนวณ",
+                tco_slide_hw: "ราคาฮาร์ดแวร์ตัวเครื่องหน้าป้าย",
+                tco_ops_title: "ติดตั้งคอมพิวเตอร์เสริม Windows OPS Module (+35,000 THB)",
+                tco_ops_desc: "เพิ่มระบบปฏิบัติการคู่ (Dual OS) เพื่อใช้โปรแกรม Office 365 ได้สมบูรณ์แบบ",
+                tco_license_title: "ค่าซอฟต์แวร์สนับสนุนและบริการซอฟต์แวร์พิเศษ (+12,000 THB)",
+                tco_license_desc: "แอปสำหรับการเขียน แบ็คอัปข้อมูลระบบคลาวด์องค์กรเชิงพาณิชย์",
+                tco_result_header: "สรุปรายละเอียดสัดส่วนงบประมาณ (Real-time)",
+                tco_row_hw: "งบประมาณฮาร์ดแวร์หลัก (มองเห็นบนผิวน้ำ)",
+                tco_row_install: "ค่าขนส่งและติดตั้งอย่างปลอดภัย (15%)",
+                tco_row_ops: "ค่าฮาร์ดแวร์ Windows OPS โมดูล",
+                tco_row_training: "ค่าฝึกอบรมผู้ใช้งานเชิงลึก (10%)",
+                tco_row_license: "ค่าลิขสิทธิ์ระบบซอฟต์แวร์โต้ตอบ",
+                tco_row_total: "รวมงบประมาณต้นทุนรวมที่แท้จริง (TCO)",
+                tco_footer_warning: "*ข้อเตือนใจ: หากฝ่ายจัดซื้อตัดงบประมาณ 'การฝึกอบรมใช้งานพนักงาน' กระดานอัจฉริยะราคาหลักแสนจะกลายเป็นเพียงทีวีติดผนังราคาแพง",
+                
+                size_title: "Room Sizing & 4-6-8 Sizing Standard",
+                size_desc: "เครื่องมือช่วยตรวจสอบความสูงหน้าจอที่จำเป็นสำหรับการใช้งานในห้องประชุมจริงตามมาตรฐานสากล",
+                size_calc_header: "ป้อนข้อมูลระยะห้องประชุมของท่าน",
+                size_slide_depth: "ระยะห่างจากหน้าจอถึงผู้ฟังคนหลังสุด",
+                size_select_use: "ประเภทและวัตถุประสงค์ของเนื้อหาที่นำเสนอ",
+                size_result_header: "ขนาดหน้าจอที่แนะนำเพื่อการมองเห็น",
+                rec_screen_label: "ขนาดหน้าจอกระดานที่แนะคำ",
+                rec_height: "ความสูงหน้าจอที่ต้องการโดยประมาณ:",
+                rec_max_distance: "เกณฑ์สากลตามกฎ 4-6-8 Rule:",
+                
+                time_title: "Racing Timeline: 10-Week Project Plan",
+                time_desc: "กรอบแผนงานกระบวนการจัดส่ง จัดซื้อ ตรวจรับ ตลอดจนฝึกอบรมผู้ใช้งานแบบสัมฤทธิ์ผล",
+                
+                dec_title: "The Strategic Decision Wizard",
+                dec_desc: "เครื่องมือตอบคำถามแบบโต้ตอบเพื่อช่วยกำหนดกลยุทธ์การจัดซื้อที่เหมาะกับงบประมาณของหน่วยงานท่าน",
+                dec_header: "ระบุข้อจำกัดของหน่วยงานท่าน",
+                dec_q1: "1. สภาพทีวีจอภาพเดิมในหน่วยงาน",
+                dec_q1_a1: "มีจอทีวีคุณภาพดีอยู่แล้ว",
+                dec_q1_a2: "ไม่มี/ใช้โปรเจคเตอร์เดิม",
+                dec_q2: "2. งบประมาณหลักสำหรับการปรับปรุงระบบ",
+                dec_result_title: "แนวทางการเลือกจัดซื้อเชิงกลยุทธ์",
+            },
+            en: {
+                nav_title: "Executive IFP Strategy 2026",
+                nav_tag: "EXECUTIVE",
+                menu_header: "Strategic Views",
+                tab_overview: "Overview Stats",
+                tab_whys: "Root Cause (5 Whys)",
+                tab_brands: "Brands & Pricing Matrix",
+                tab_tco: "TCO Iceberg Simulator",
+                tab_sizing: "Sizing & Standards",
+                tab_timeline: "10-Week Timeline",
+                tab_decision: "Decision Wizard",
+                
+                ov_title: "Executive IFP Transformation",
+                ov_desc: "Statistics and insights for transitioning from legacy projectors to seamless smart board collaboration systems.",
+                stat_satisfaction: "User Satisfaction Rate",
+                stat_setup: "Meeting Setup Time Reduced",
+                stat_resolution: "Resolution Standard",
+                stat_weight: "Panel Weight Risk Threshold",
+                ov_graph_title: "Symptom Proportion in Legacy Systems",
+                prob_software: "Software Glitches / Compatibility Issue",
+                prob_physical: "Physical Wear & Decay (Lamps)",
+                prob_maintenance: "Delayed Service & Maintenance Assistance",
+                ov_graph_footer: "Data analyzed from actual support ticket databases from IT departments.",
+                ov_legacy_title: "Legacy Style: One-Way Presentation",
+                ov_legacy_desc: "Common issues encountered with standard project screens",
+                legacy_point_1: "Shadow blocking presentation area (Shadow Interruption)",
+                legacy_point_2: "Dim display decay over bulb shelf-life (Bulb Decay)",
+                legacy_point_3: "Requirement for zero daylight ambient (Darkrooms)",
+                ov_btn_analyze: "Proceed to 5 Whys Root Cause Analysis",
+                
+                whys_title: "Root Cause & 5 Whys Analysis",
+                whys_desc: "Deep diving into actual causes behind meeting room engagement drops.",
+                why_p_title: "Problem / Major Symptom",
+                why_p_desc: "Collaboration is slow, high tech-friction, and ineffective.",
+                why_w1_title: "Why? (Low Audience Engagement)",
+                why_w1_desc: "Presentations are one-way only; audiences cannot write or share screen in sync.",
+                why_w2_title: "Why? (Low Text Visibility)",
+                why_w2_desc: "Projector screen lacks brightness & contrast; opening window blinds blurs content.",
+                why_w3_title: "Why? (No Interactive Capabilities)",
+                why_w3_desc: "Hardware deployed is passive analog; lacks modern interactive interfaces or touch digits.",
+                why_w4_title: "Why? (Mismatched Procurement Focus)",
+                why_w4_desc: "Past purchasing policies focused purely on base hardware units (Initial Costs) without ecosystems.",
+                why_rc_title: "ROOT CAUSE",
+                why_rc_desc: "Absence of Total Cost of Ownership (TCO) evaluation and Digital Collaboration Ecosystem strategy.",
+                whys_insight_title: "SLA Framework and Unit Weight Hazard",
+                whys_insight_desc: "Interactive flat panels are extremely heavy (69-108kg). Procurement without White Glove SLAs shifts extreme danger to corporate IT departments during unmounting and repairs.",
+                whys_alert_title: "Self-Repair Danger Warnings",
+                whys_alert_desc: "Handling or unmounting panels over 70kg without specialist engineering can damage the display easily and compromise staff safety.",
+                
+                brand_title: "Brand Landscape & Pricing Matrix",
+                brand_desc: "Comparing global smart display options and Thai pricing dynamics.",
+                tbl_col_segment: "Brand Segment / Tier",
+                tbl_col_size55: "55 Inch Size Range",
+                tbl_col_size65: "65 Inch Size Range",
+                tbl_col_size75: "75 Inch Size Range",
+                tbl_col_features: "Core Target / Security Features",
+                brand_note: "Note: Estimated budgets derived from 2026 Thailand industry average. Rates exclude 7% VAT and Windows OPS Module expansions.",
+                
+                tco_title: "The TCO Iceberg Simulator",
+                tco_desc: "Evaluate the visible hardware vs hidden budgets ranging from 30% to 50% extra.",
+                tco_input_header: "Configure Budget Parameters",
+                tco_slide_hw: "Hardware Unit Display Price",
+                tco_ops_title: "Install Windows OPS Module (+35,000 THB)",
+                tco_ops_desc: "Enables Dual OS to execute full desktop Microsoft Office applications.",
+                tco_license_title: "Annual Enterprise Software License Support (+12,000 THB)",
+                tco_license_desc: "Cloud sync whiteboard backups, remote device management tools.",
+                tco_result_header: "Estimated Total Cost Breakdown",
+                tco_row_hw: "Visible Budget: Core Hardware Only",
+                tco_row_install: "Safe Shipping & Mount (15%)",
+                tco_row_ops: "Windows PC Module Add-on",
+                tco_row_training: "Adoption Training & Onboarding (10%)",
+                tco_row_license: "Annual Workspace Soft License",
+                tco_row_total: "Actual Total Cost of Ownership (TCO)",
+                tco_footer_warning: "*Reminder: Skipping the 10% Training allowance will transform a hundred-thousand Baht smart board into a glorified TV display.",
+                
+                size_title: "Room Sizing & 4-6-8 Sizing Standard",
+                size_desc: "Evaluate appropriate display heights based on standard viewing distance thresholds.",
+                size_calc_header: "Configure Your Space",
+                size_slide_depth: "Distance to the last row of audience",
+                size_select_use: "Presentation Application Intent",
+                size_result_header: "Sizing Recommendation",
+                rec_screen_label: "Recommended Panel Size",
+                rec_height: "Target Vertical Height needed:",
+                rec_max_distance: "Viewing rule benchmark:",
+                
+                time_title: "Racing Timeline: 10-Week Project Plan",
+                time_desc: "Strategic execution stages for shipping, deployments, and testing.",
+                
+                dec_title: "The Strategic Decision Wizard",
+                dec_desc: "An interactive questionnaire to recommend the correct hardware strategy.",
+                dec_header: "Identify Your Current Situation",
+                dec_q1: "1. Current Display Condition",
+                dec_q1_a1: "High quality commercial TVs present",
+                dec_q1_a2: "None / Old analog projectors only",
+                dec_q2: "2. Target Framework Budget",
+                dec_result_title: "Tactical Path Recommendation",
+            },
+            jp: {
+                nav_title: "IFP導入戦略ダッシュボード 2026",
+                nav_tag: "経営陣",
+                menu_header: "戦略的分析ビュー",
+                tab_overview: "ダッシュボード概要",
+                tab_whys: "根本原因分析 (5 Whys)",
+                tab_brands: "ブランドと市場価格",
+                tab_tco: "TCOシミュレーター",
+                tab_sizing: "画面サイズ設計",
+                tab_timeline: "10週間ロードマップ",
+                tab_decision: "意思決定ツール",
+                
+                ov_title: "Executive IFP Transformation",
+                ov_desc: "レガシープロジェクターからインタラクティブディスプレイ（IFP）への移行による経営価値指標の概要",
+                stat_satisfaction: "ユーザー満足度評価",
+                stat_setup: "会議準備時間の削減",
+                stat_resolution: "解像度基準",
+                stat_weight: "重量物の取り扱いリスク",
+                ov_graph_title: "従来システムにおける問題発生率",
+                prob_software: "ソフトウェア不具合・互換性問題",
+                prob_physical: "機材の経年劣化（ランプの消耗）",
+                prob_maintenance: "IT保守・サポート対応の遅れ",
+                ov_graph_footer: "IT保守サービスへ寄せられたサポート請求チケットの履歴に基づく実データ",
+                ov_legacy_title: "従来プレゼンテーション：一方向性",
+                ov_legacy_desc: "アナログ型プロジェクターおよびスクリーンで発生する慢性課題",
+                legacy_point_1: "登壇者の影が重なり画面を遮る問題",
+                legacy_point_2: "経年による輝度低下と色彩変化",
+                legacy_point_3: "十分な視認性を確保するための消灯要求",
+                ov_btn_analyze: "根本原因を「5 Whys」でさらに分析",
+                
+                whys_title: "Root Cause & 5 Whys Analysis",
+                whys_desc: "会議中のコラボレーション効率が著しく低下する根本原因の分析",
+                why_p_title: "現象 / 主要課題",
+                why_p_desc: "会議の開始が遅れ、活発な議論が阻害される",
+                why_w1_title: "Why?（参加者の主体的な参加率が低下）",
+                why_w1_desc: "一方向の情報提示にとどまり、双方向の書き込みや同時共有ができないため",
+                why_w2_title: "Why?（資料が明確に見えない）",
+                why_w2_desc: "プロジェクターの光量が足りず、照明をつけたままだと文字が白飛びするため",
+                why_w3_title: "Why?（対話的な機能が皆無）",
+                why_w3_desc: "導入されている機器が単なる画面投影用であり、デジタルタッチ操作を処理できないため",
+                why_w4_title: "Why?（初期導入コストのみを重視した選定）",
+                why_w4_desc: "過去の調達方針が、ソフトウェア連携などを考慮せず「ハード単体価格の安さ」のみを評価したため",
+                why_rc_title: "根本原因 (Root Cause)",
+                why_rc_desc: "総所有コスト（TCO）の概念と、デジタルコラボレーション環境の構築を見据えた戦略的予算措置の欠如",
+                whys_insight_title: "SLAと重量リスクの相互関係",
+                whys_insight_desc: "IFP製品は、約69〜108kgという極めて重いパネルです。専門的な「ホワイトグローブSLA」サービスを含まずに導入した場合、IT担当部署に機材の取り外しや返送対応時の安全リスクが転嫁されます。",
+                whys_alert_title: "セルフメンテナンスの潜伏リスク",
+                whys_alert_desc: "十分な人員や機材がない状況で70kg以上のパネルを移動させようとすると、画面破損のみならず従業員の労働災害につながる恐れがあります。",
+                
+                brand_title: "Brand Landscape & Pricing Matrix",
+                brand_desc: "各グローバルブランドのポジショニングおよびタイ国内における参考価格分析",
+                tbl_col_segment: "ブランドランク / セグメント",
+                tbl_col_size55: "55インチ参考価格帯",
+                tbl_col_size65: "65インチ参考価格帯",
+                tbl_col_size75: "75インチ参考価格帯",
+                tbl_col_features: "主要機能の指向性 / セキュリティ保護",
+                brand_note: "注釈: 上記想定価格はタイ国内の平均価格に基づいて算出されています。VAT 7%および別売りのOPSモジュールは含みません。",
+                
+                tco_title: "The TCO Iceberg Simulator",
+                tco_desc: "製品価格以外の「見えないコスト（TCO）」が30%〜50%発生する構造をシミュレーションします",
+                tco_input_header: "予算変数の調整",
+                tco_slide_hw: "IFPハードウェア単体購入価格",
+                tco_ops_title: "Windows OPSモジュールの組み込み (+35,000 THB)",
+                tco_ops_desc: "完全なOffice 365のビジネスアプリケーションを実行するためのスロットインPC",
+                tco_license_title: "年間のソフトウェアライセンスと追加保証 (+12,000 THB)",
+                tco_license_desc: "企業用途向けのクラウドバックアップ、一括デバイス管理ツール",
+                tco_result_header: "実際の予算構成比算出 (Real-time)",
+                tco_row_hw: "表出コスト：IFPハード本体価格",
+                tco_row_install: "専門技術者による配送設置費用 (15%)",
+                tco_row_ops: "Windows OPSモジュール費用",
+                tco_row_training: "従業員向けトレーニング教育費用 (10%)",
+                tco_row_license: "ビジネス専用ソフトウェア保守費用",
+                tco_row_total: "統合生涯総所有コスト (TCO)",
+                tco_footer_warning: "*注意: 教育・トレーニング費用を予算から省略した場合、導入された高級ボードは単なる「高価なモニター」として放置されます。",
+                
+                size_title: "Room Sizing & 4-6-8 Sizing Standard",
+                size_desc: "部屋の奥行きに基づいて、業界標準（4-6-8ルール）を満たす最適ディスプレイ寸法を割り出します",
+                size_calc_header: "対象となる室内の寸法を入力",
+                size_slide_depth: "画面から最後列席までの最大視認距離",
+                size_select_use: "表示予定の主な資料内容",
+                size_result_header: "算出された必要画面要件",
+                rec_screen_label: "推奨ディスプレイサイズ",
+                rec_height: "必要とされる最小限の表示高:",
+                rec_max_distance: "適用された設計ルール基準:",
+                
+                time_title: "Racing Timeline: 10-Week Project Plan",
+                time_desc: "確実な調達から運搬、検証、トレーニング教育に至る10週間の計画スケジュール",
+                
+                dec_title: "The Strategic Decision Wizard",
+                dec_desc: "簡単な設問から、お客様の現在の環境における最適なIFP調達モデルを推奨します",
+                dec_header: "現状の状況を選択してください",
+                dec_q1: "1. 既存ディスプレイ機材の有無",
+                dec_q1_a1: "高品質の商用テレビをすでに所有",
+                dec_q1_a2: "既存機材なし、またはプロジェクターのみ",
+                dec_q2: "2. 確保可能な予算レベル",
+                dec_result_title: "推奨調達戦略のアドバイス",
+            }
+        };
+
+        let currentLang = 'th';
+
+        // 1. ฟังก์ชันเปลี่ยนภาษาที่ทำการอัปเดต DOM ทั้งหมด
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // เปลี่ยนสถานะปุ่มเลือกภาษา
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-accent', 'text-white', 'border-brand-accent');
+                btn.classList.add('bg-transparent', 'text-gray-400', 'border-brand-border', 'hover:border-gray-500');
+            });
+            const activeBtn = document.getElementById(`btn-lang-${lang}`);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-brand-accent', 'text-white', 'border-brand-accent');
+                activeBtn.classList.remove('bg-transparent', 'text-gray-400', 'border-brand-border', 'hover:border-gray-500');
+            }
+
+            // อัปเดตเนื้อหาตาม data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    element.innerHTML = translations[lang][key];
+                }
+            });
+
+            // อัปเดตข้อมูลคำนวณและข้อมูลจำลองที่ผูกกับภาษา
+            updateTCO();
+            calculateSizing();
+            evaluateDecision();
+            updateStepDetail();
+        }
+
+        // 2. ฟังก์ชันสลับการแสดงผลของแต่ละแท็บวิว
+        function switchTab(tabId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-brand-accent', 'border-brand-accent', 'bg-brand-border/30');
+                btn.classList.add('text-gray-400', 'border-transparent');
+            });
+            document.getElementById(`tab-${tabId}`).classList.add('text-brand-accent', 'border-brand-accent', 'bg-brand-border/30');
+            document.getElementById(`tab-${tabId}`).classList.remove('text-gray-400', 'border-transparent');
+        }
+
+        // 3. ฟังก์ชันการทำงานของหน้าแบรนด์
+        function filterBrands(tier) {
+            // ปรับปุ่ม Active
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-accent', 'text-white');
+                btn.classList.add('bg-brand-border', 'text-gray-300');
+            });
+            
+            let activeBtnId = 'all';
+            if (tier === 'all') activeBtnId = 'btn-filter-all';
+            else if (tier === 'tier1') activeBtnId = 'btn-filter-tier1';
+            else if (tier === 'tier2') activeBtnId = 'btn-filter-tier2';
+            else if (tier === 'tier3') activeBtnId = 'btn-filter-tier3';
+            
+            document.getElementById(activeBtnId).classList.add('bg-brand-accent', 'text-white');
+            document.getElementById(activeBtnId).classList.remove('bg-brand-border', 'text-gray-300');
+
+            // ซ่อน/แสดงแถวตาราง
+            document.querySelectorAll('.brand-row').forEach(row => {
+                if (tier === 'all' || row.classList.contains(tier)) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+        }
+
+        // 4. ฟังก์ชันจำลองคำนวณ TCO แบบเรียลไทม์
+        function updateTCO() {
+            const hwVal = parseInt(document.getElementById('tco-hw-range').value);
+            document.getElementById('tco-hw-val').innerText = hwVal.toLocaleString();
+
+            const install = hwVal * 0.15;
+            const training = hwVal * 0.10;
+            
+            let ops = 0;
+            if (document.getElementById('tco-opt-ops').checked) {
+                ops = 35000;
+            }
+
+            let license = 0;
+            if (document.getElementById('tco-opt-license').checked) {
+                license = 12000;
+            }
+
+            const total = hwVal + install + training + ops + license;
+
+            document.getElementById('res-hw').innerText = hwVal.toLocaleString() + " THB";
+            document.getElementById('res-install').innerText = install.toLocaleString() + " THB";
+            document.getElementById('res-ops').innerText = ops.toLocaleString() + " THB";
+            document.getElementById('res-training').innerText = training.toLocaleString() + " THB";
+            document.getElementById('res-license').innerText = license.toLocaleString() + " THB";
+            document.getElementById('res-total').innerText = total.toLocaleString() + " THB";
+        }
+
+        // 5. ฟังก์ชันคำนวณ Sizing หน้าจอตามเกณฑ์ 4-6-8 Rule
+        function calculateSizing() {
+            const depth = parseFloat(document.getElementById('size-depth-range').value);
+            document.getElementById('size-depth-val').innerText = depth.toFixed(1);
+
+            const useType = document.getElementById('size-use-type').value;
+            let ratio = 4; // กฎความสูงแบบละอียด 4 เท่า สำหรับการวิเคราะห์ตาราง
+            let ruleText = "4x Height rule applied (Analytical data)";
+
+            if (useType === 'presentation') {
+                ratio = 6;
+                ruleText = "6x Height rule applied (Standard slides)";
+            } else if (useType === 'video') {
+                ratio = 8;
+                ruleText = "8x Height rule applied (General video / web)";
+            }
+
+            // คำนวณหาความสูงจอที่ควรได้
+            const reqHeight = depth / ratio;
+            document.getElementById('rec-h-text').innerText = reqHeight.toFixed(2) + " m";
+            document.getElementById('rec-rule-text').innerText = ruleText;
+
+            // กำหนดขนาดหน้าจอจำลองที่แนะนำ
+            let recommendedSize = "55\"";
+            if (depth < 4.5) {
+                recommendedSize = "55\"";
+            } else if (depth >= 4.5 && depth <= 7) {
+                recommendedSize = "75\"";
+            } else {
+                recommendedSize = "86\" - 98\"";
+            }
+            document.getElementById('rec-screen-size').innerText = recommendedSize;
+        }
+
+        // 6. แผนงาน Roadmap Timeline แบบเปลี่ยนข้อมูลตามตัวเลือกสเตป
+        const timelineSteps = {
+            th: [
+                { title: "Define Research Requirements", desc: "สัปดาห์ที่ 1-2: สำรวจความต้องการ ค้นคว้าสเปกทางเทคนิค และรวบรวมข้อดีข้อเสียของแต่ละแบรนด์ (W1-W2)" },
+                { title: "Technical Evaluation", desc: "สัปดาห์ที่ 2: ประเมินเทคโนโลยีและฟังก์ชันที่ขาดไม่ได้ เช่น การรับรอง Google EDLA และเทคโนโลยี Zero Bonding" },
+                { title: "Feature & TCO Comparison", desc: "สัปดาห์ที่ 3: ทำตารางประเมินคะแนน Weighted Scoring Matrix และคำนวณสัดส่วน TCO ภูเขาน้ำแข็งเทียบกับราคาหน้าเครื่อง" },
+                { title: "Purchase Order & SLA Lock", desc: "สัปดาห์ที่ 4: ออกใบสั่งซื้อและล็อกเงื่อนไขสำคัญในสัญญาบริการระดับความมั่นใจ SLA (เช่น การตรวจสอบภายใน 4 ชม. มีเครื่องทดแทน)" },
+                { title: "Logistics & Factory Quality Audit", desc: "สัปดาห์ที่ 5-6: รอการขนส่ง นำเข้า และให้ฝ่ายผู้เชี่ยวชาญวิศวกรรมสุ่มตรวจสภาพโครงสร้าง (Physical & Software Quality) ของสินค้า" },
+                { title: "On-site Professional Installation", desc: "สัปดาห์ที่ 7-8: บริการติดตั้งระดับ White Glove Service ขนย้ายจอน้ำหนักสูงกว่า 70 กิโลกรัม เดินสายสัญญาณความเร็วสูงอย่างเรียบร้อย" },
+                { title: "Acceptance Testing & Checklist", desc: "สัปดาห์ที่ 9: ทำการประเมินตรวจสอบประสิทธิภาพและฟังก์ชัน Touch Point ร่วมกับตัวแทนเทคนิคฝ่าย IT เพื่อส่งมอบระบบ" },
+                { title: "Staff User Adoption & Training", desc: "สัปดาห์ที่ 10: จัดการอบรมพนักงานและทำแบบทดสอบ (User Adoption Training) เพื่อเปลี่ยนผ่านเป็น Digital Workplace อย่างแท้จริง" }
+            ],
+            en: [
+                { title: "Define Research Requirements", desc: "Weeks 1-2: Gather organizational constraints, technical research of brands, and original IT infrastructure alignment (W1-W2)." },
+                { title: "Technical Evaluation", desc: "Week 2: Analyze mandatory interactive functions, display clarity parameters, Google EDLA specifications, and Zero Bonding tests." },
+                { title: "Feature & TCO Comparison", desc: "Week 3: Conduct Weighted Scoring Matrix analysis and evaluate total visible hardware budgets against hidden infrastructure costs." },
+                { title: "Purchase Order & SLA Lock", desc: "Week 4: Execute Purchase Order with locked Service Level Agreement metrics (e.g., 4-hour response window, loaner hardware replacement)." },
+                { title: "Logistics & Factory Quality Audit", desc: "Weeks 5-6: Shipment wait-time and technical screening for physical screen anomalies and firmware updates." },
+                { title: "On-site Professional Installation", desc: "Weeks 7-8: Conduct high-risk White Glove installation of heavy panels (>70kg), wall mounts, and safe high-speed wiring structures." },
+                { title: "Acceptance Testing & Checklist", desc: "Week 9: Walkthrough of technical checklists, touch response times, and multi-user calibration parameters alongside the corporate IT team." },
+                { title: "Staff User Adoption & Training", desc: "Week 10: Deliver extensive user training and digital workplace onboarding to transform meetings and guarantee solid ROI." }
+            ],
+            jp: [
+                { title: "Define Research Requirements", desc: "第1-2週：導入要件の定義、および現在稼働中の既存ITインフラにおける互換性要件の洗い出し（W1-W2）" },
+                { title: "Technical Evaluation", desc: "第2週：Google EDLAセキュリティ対応、ゼロボンディング技術など必須インタラクティブ性能の検証と評価" },
+                { title: "Feature & TCO Comparison", desc: "第3週：ベンダー各社の採点マトリクス評価、および初期購入費以外の「見えないコスト（TCO）」との統合比較" },
+                { title: "Purchase Order & SLA Lock", desc: "第4週：調達の発注。および保守合意事項（SLA：故障発生から4時間以内の技術者訪問、代替機提供など）の正式な締結" },
+                { title: "Logistics & Factory Quality Audit", desc: "第5-6週：輸送手配、製品出荷前の最終検品、ハードウェアおよび初期搭載ファームウェアの物理的整合性テスト" },
+                { title: "On-site Professional Installation", desc: "第7-8週：70kg超の重量物に対応する専門の設置施工、壁面強化工事、および周辺配線保護のエンジニアリング" },
+                { title: "Acceptance Testing & Checklist", desc: "第9週：IT担当役員立ち会いによるタッチ精度、ソフトウェア接続検証、およびシステム完成確認書への承認" },
+                { title: "Staff User Adoption & Training", desc: "第10週：操作マニュアル講習会、従業員向けトレーニング教育による活用移行率の最終監査と導入完了" }
+            ]
+        };
+
+        let currentTimelineStepIndex = 1;
+
+        function showStep(stepNum) {
+            currentTimelineStepIndex = stepNum;
+            updateStepDetail();
+        }
+
+        function updateStepDetail() {
+            // ปรับสีปุ่ม Active
+            document.querySelectorAll('.step-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-accent/20', 'text-brand-accent', 'border-brand-accent/40');
+                btn.classList.add('bg-brand-border', 'text-gray-400', 'border-brand-border');
+            });
+            const activeBtn = document.getElementById(`step-btn-${currentTimelineStepIndex}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-brand-accent/20', 'text-brand-accent', 'border-brand-accent/40');
+                activeBtn.classList.remove('bg-brand-border', 'text-gray-400', 'border-brand-border');
+            }
+
+            // ดึงข้อมูลตามภาษาและสเตป
+            const data = timelineSteps[currentLang][currentTimelineStepIndex - 1];
+            document.getElementById('step-badge').innerText = `Step ${currentTimelineStepIndex}`;
+            document.getElementById('step-title').innerText = data.title;
+            document.getElementById('step-desc').innerText = data.desc;
+        }
+
+        // 7. แบบจำลองคำแนะนำ Decision Wizard
+        function evaluateDecision() {
+            const hasTv = document.querySelector('input[name="wiz-tv"]:checked').value;
+            const budget = document.querySelector('input[name="wiz-budget"]:checked').value;
+
+            let title = "";
+            let desc = "";
+
+            if (currentLang === 'th') {
+                if (hasTv === 'yes' && budget === 'low') {
+                    title = "กลยุทธ์ Retrofit (Cybernetyx Galileo ONE)";
+                    desc = "เนื่องจากองค์กรมีจอทีวีขนาดใหญ่ที่ดีอยู่แล้ว และงบประมาณค่อนข้างจำกัด การติดเซนเซอร์จับสัมผัส 3 มิติด้านบนเป็นทางเลือกที่ดีที่สุด ช่วยให้ประหยัดงบได้กว่า 60%";
+                } else if (hasTv === 'no' || budget === 'high') {
+                    title = "จัดซื้อ All-in-One IFP (Tier 1/2 Premium/Standard)";
+                    desc = "แนะนำให้เปลี่ยนระบบแสดงผลใหม่ทั้งหมด โดยใช้จอกระดานอัจฉริยะ (IFP) ที่ติดตั้งระบบปฏิบัติการคู่ (Dual OS), ซีโร่บอนดิ้ง และ EDLA เพื่อให้ใช้งานได้ยาวนานและลดความยุ่งยากของฝ่าย IT";
+                } else {
+                    title = "จัดซื้อ All-in-One IFP (Tier 3 Value Segment)";
+                    desc = "สำหรับการปรับปรุงระบบในระดับปานกลาง จอกระดานระดับแบรนด์คุ้มค่า (เช่น Maxhub / GYGAR) ขนาด 65-75 นิ้ว ช่วยให้ผู้ร่วมประชุมโต้ตอบได้เต็มศักยภาพในราคาที่สมเหตุสมผล";
+                }
+            } else if (currentLang === 'en') {
+                if (hasTv === 'yes' && budget === 'low') {
+                    title = "Retrofit Solution (Cybernetyx Galileo ONE)";
+                    desc = "Since high-quality flat screens exist but budget is tight, upgrading them with a 3D optical touch sensor clip-on is the smartest path. Saves over 60% budget.";
+                } else if (hasTv === 'no' || budget === 'high') {
+                    title = "Deploy New All-in-One IFP (Tier 1/2 Brand)";
+                    desc = "We recommend a complete display replacement with fully integrated 4K UHD smart boards. This guarantees zero parallax, high brightness, and maximum IT lifecycle convenience.";
+                } else {
+                    title = "Deploy All-in-One IFP (Tier 3 Value Segment)";
+                    desc = "A balanced corporate option. Selecting high-performance value brands like Maxhub or GYGAR ensures standard collaborative features at 50% unit price saving.";
+                }
+            } else if (currentLang === 'jp') {
+                if (hasTv === 'yes' && budget === 'low') {
+                    title = "レトロフィット導入 (Cybernetyx Galileo ONE)";
+                    desc = "高画質な液晶テレビが既にあり、予算を抑制したい場合に最適。3D赤外線センサーを取り付け、既存テレビを数分で電子黒板に。予算を60%以上節約。";
+                } else if (hasTv === 'no' || budget === 'high') {
+                    title = "新規 All-in-One IFP調達（Tier 1/2 ブランド）";
+                    desc = "表示システム全体の刷新を推奨。デュアルOS、ゼロボンディング、Google EDLA対応の4Kパネルを導入することでIT管理工数を劇的に低減します。";
+                } else {
+                    title = "新規 All-in-One IFP調達（Tier 3 普及型セグメント）";
+                    desc = "実用性を備えた普及型ブランド（MaxhubやGYGARなど）の65〜75インチモデルが、スマートな双方向共有機能を最もお求めやすいコストで実現します。";
+                }
+            }
+
+            document.getElementById('dec-rec-title').innerText = title;
+            document.getElementById('dec-rec-desc').innerText = desc;
+        }
+
+        // เริ่มต้นการใช้งาน (Initial Load)
+        window.onload = function() {
+            setLanguage('th');
+            updateTCO();
+            calculateSizing();
+            evaluateDecision();
+        };
+    </script>
+</body>
+</html>
