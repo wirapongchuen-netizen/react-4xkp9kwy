@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TYDS Proactive Manufacturing OS V51</title>
+    <!-- Tailwind CSS (Fast, responsive layout utilities) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js (Interactive Canvas charting library) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #080c14; color: #f3f4f6; }
+        .tech-font { font-family: 'Orbitron', sans-serif; }
+        
+        /* Dynamic CSS Variables for Brand DNA Customization */
+        :root {
+            --brand-color: #dc2626; /* Default Honda Red */
+            --brand-color-hover: #991b1b;
+            --brand-bg-glow: rgba(220, 38, 38, 0.15);
+            --brand-border: rgba(220, 38, 38, 0.35);
+            --brand-gradient: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+        }
+
+        .brand-text { color: var(--brand-color); }
+        .brand-bg { background-color: var(--brand-color); }
+        .brand-border { border-color: var(--brand-color); }
+        .brand-ring { --tw-ring-color: var(--brand-color); }
+        .brand-glow { box-shadow: 0 0 25px var(--brand-bg-glow); }
+        .brand-border-glow { border-color: var(--brand-border); }
+        .brand-grad-bg { background: var(--brand-gradient); }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: var(--brand-color);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="antialiased selection:bg-stone-850 selection:text-white">
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ส่วนหัวหน้าจออัจฉริยะ (Interactive Command Center Header) -->
+    <header class="bg-[#111827]/90 backdrop-blur-md border border-stone-800 rounded-3xl p-6 mb-6 brand-glow brand-border-glow flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 transition-all duration-300">
+        <div class="flex items-center gap-4">
+            <div class="brand-grad-bg text-stone-950 p-4 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-300">
+                <span class="tech-font font-black text-2xl tracking-widest">V51</span>
+            </div>
+            <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="bg-stone-850 text-stone-300 font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider border border-stone-800">G-DRIVE & LINE INTEGRATED</span>
+                    <span id="active-brand-badge" class="brand-bg text-stone-950 font-mono text-[10px] font-black px-2.5 py-0.5 rounded-md uppercase tracking-wider transition-all duration-300">HONDA DNA ACTIVE</span>
+                    <span id="live-clock" class="text-[10px] text-stone-400 font-mono font-semibold">12:00:00 AM</span>
+                </div>
+                <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-tight mt-1">Toyoda Enterprise Manufacturing OS V51</h1>
+                <p class="text-stone-400 text-xs mt-0.5">กำจัดคอขวด ข้อมูลกระจัดกระจาย และสร้างความโปร่งใสด้วยระบบเชื่อมต่อแบบเขียน CAD ย้อนกลับ และแจ้งเตือน LINE เชิงรุก</p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4 w-full lg:w-auto">
+            <!-- สวิตช์ตรวจสอบสิทธิ์ผู้ใช้งาน -->
+            <div class="bg-stone-950 border border-stone-850 p-2 rounded-2xl flex items-center gap-2">
+                <span class="text-[10px] text-amber-500 font-bold px-1 uppercase tracking-wider font-mono">สิทธิ์ผู้ใช้:</span>
+                <select id="user-role-selector" onchange="switchUserRole(this.value)" class="bg-stone-900 border border-stone-800 text-white rounded-xl py-1 px-2.5 text-xs font-bold outline-none cursor-pointer focus:ring-1 brand-ring transition-all">
+                    <option value="admin">Administrator (Full Access)</option>
+                    <option value="executive">Executive VP (Dashboard Only)</option>
+                    <option value="diemold">DieMold Specialist (Production-Only)</option>
+                </select>
+            </div>
+
+            <!-- ตัวปรับอัตลักษณ์แบรนด์สปอร์ตไฮเทค -->
+            <div class="bg-stone-950 border border-stone-850 p-2 rounded-2xl flex items-center gap-2">
+                <span class="text-[10px] text-stone-500 font-bold px-1 uppercase tracking-wider font-mono">Brand DNA:</span>
+                <select id="brand-selector" onchange="changeBrandDNA(this.value)" class="bg-stone-900 border border-stone-800 text-white rounded-xl py-1 px-2.5 text-xs font-bold outline-none cursor-pointer focus:ring-1 brand-ring transition-all">
+                    <option value="Honda">Honda Racing (Red)</option>
+                    <option value="Kawasaki">Kawasaki Green (Sport)</option>
+                    <option value="Yamaha">Yamaha Tech (Blue)</option>
+                    <option value="Kubota">Kubota Orange (Heavy)</option>
+                    <option value="Enkei">Enkei Alloy (Silver)</option>
+                </select>
+            </div>
+
+            <!-- เมนูสลับ 3 ภาษา -->
+            <div class="flex bg-stone-950 border border-stone-850 p-1 rounded-xl">
+                <button onclick="switchLanguage('TH')" id="btn-lang-TH" class="px-3 py-1 text-xs font-bold rounded-lg transition-all bg-stone-800 text-white">ไทย</button>
+                <button onclick="switchLanguage('EN')" id="btn-lang-EN" class="px-3 py-1 text-xs font-bold rounded-lg transition-all text-stone-400 hover:text-white">EN</button>
+                <button onclick="switchLanguage('JP')" id="btn-lang-JP" class="px-3 py-1 text-xs font-bold rounded-lg transition-all text-stone-400 hover:text-white">JP</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- เมนูนำทางแบบสลับแท็บ -->
+    <nav class="flex gap-1.5 bg-stone-950 p-1.5 rounded-2xl border border-stone-850 overflow-x-auto custom-scrollbar mb-6">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all bg-stone-850 text-white border border-stone-800">
+            <span>📊</span> <span class="nav-lbl" data-key="navDashboard">Dashboard Control</span>
+        </button>
+        <button onclick="switchTab('gdrive')" id="nav-gdrive" class="nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all text-stone-400 hover:text-white">
+            <span>📁</span> <span class="nav-lbl" data-key="navGDrive">G-Drive CAD Auditor</span>
+        </button>
+        <button onclick="switchTab('line-notify')" id="nav-line-notify" class="nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all text-stone-400 hover:text-white">
+            <span>💬</span> <span class="nav-lbl" data-key="navLine">LINE Escalation</span>
+        </button>
+        <button onclick="switchTab('api')" id="nav-api" class="nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all text-stone-400 hover:text-white">
+            <span>🗄️</span> <span class="nav-lbl" data-key="navAPI">SQL & API Center</span>
+        </button>
+        <button onclick="switchTab('flow')" id="nav-flow" class="nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all text-stone-400 hover:text-white">
+            <span>⚙️</span> <span class="nav-lbl" data-key="navFlow">Dynamic Flow Editor</span>
+        </button>
+        <button onclick="switchTab('lpdc')" id="nav-lpdc" class="nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all text-stone-400 hover:text-white">
+            <span>⚡</span> <span class="nav-lbl" data-key="navLPDC">LPDC Diagnostic</span>
+        </button>
+        <button onclick="switchTab('qa')" id="nav-qa" class="nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all text-stone-400 hover:text-white">
+            <span>📂</span> <span class="nav-lbl" data-key="navQA">SOP Hub (04-QA)</span>
+        </button>
+        <button onclick="switchTab('rca')" id="nav-rca" class="nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all text-stone-400 hover:text-white">
+            <span>🧠</span> <span class="nav-lbl" data-key="navRCA">Auto-RCA 5-Why</span>
+        </button>
+        <button onclick="switchTab('whiteboard')" id="nav-whiteboard" class="nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all text-stone-400 hover:text-white">
+            <span>📝</span> <span class="nav-lbl" data-key="navWhiteboard">Touch Whiteboard</span>
+        </button>
+    </nav>
+
+    <!-- พื้นที่แสดงผลระบบ -->
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- ============================================== -->
+        <!-- TAB 1: EXECUTIVE DASHBOARD CONTROL             -->
+        <!-- ============================================== -->
+        <section id="tab-dashboard" class="tab-content active lg:col-span-12 space-y-6">
+            
+            <!-- แผงสไลด์เชิงกลยุทธ์ตามแบรนด์ DNA -->
+            <div class="bg-gradient-to-r from-stone-900 via-[#111827] to-stone-900 border border-stone-850 p-6 rounded-3xl brand-border-glow flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="space-y-2">
+                    <span class="text-[9px] font-mono font-black brand-text tracking-widest uppercase block">STRATEGIC COMMAND MODULE</span>
+                    <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+                        <span id="brand-logo-emoji">🏎️</span> 
+                        <span>รายงานประสิทธิภาพและความเที่ยงตรงแม่พิมพ์: <span id="brand-title-target" class="brand-text">HONDA MOTOR CO.</span></span>
+                    </h2>
+                    <p class="text-xs text-stone-400 max-w-4xl leading-relaxed">
+                        เชื่อมต่อข้อมูล OEE จริงรายแผนกตรงจาก SQL Server ตรวจวัดสิทธิ์การใช้งาน และเข้าพิจารณาไฟล์ Drawing คู่สัญญาเพื่อความโปร่งใส ปราศจากความขัดแย้งของรุ่นแบบ CAD
+                    </p>
+                </div>
+                <div class="bg-stone-950/70 border border-stone-850 p-4 rounded-2xl flex flex-col justify-center min-w-[210px] text-center">
+                    <span class="text-[9px] text-stone-400 font-mono block mb-1">READY FOR SHIPMENT INDEX</span>
+                    <span id="rfs-gauge-val" class="text-3xl font-black font-mono brand-text">95.0%</span>
+                    <div class="w-full bg-stone-800 h-1 rounded-full mt-2 overflow-hidden">
+                        <div id="rfs-gauge-bar" class="brand-bg h-full rounded-full transition-all duration-500" style="width: 95%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- กราฟประสิทธิภาพรายแผนกแบบ Closed-loop OEE -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- ฝั่งซ้าย: แผนภาพแสดง OEE จริงของ 3 แผนกสำคัญ -->
+                <div class="lg:col-span-8 bg-stone-900 border border-stone-800 p-6 rounded-3xl space-y-4">
+                    <div class="border-b border-stone-800 pb-3 flex justify-between items-center flex-wrap gap-2">
+                        <div>
+                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                <span>📊</span> 
+                                <span>ดัชนีประสิทธิผลโดยรวม (OEE Dashboard): <span class="brand-text uppercase font-mono text-xs">Live SQL Sync</span></span>
+                            </h3>
+                            <p class="text-[10px] text-stone-400">เปรียบเทียบค่าความพร้อมการใช้งาน (Availability), ประสิทธิภาพ (Performance), คุณภาพ (Quality) แบบบูรณาการ</p>
+                        </div>
+                        <span id="active-user-badge" class="text-xs bg-stone-950 border border-stone-800 text-amber-500 px-3 py-1.5 rounded-xl font-mono font-bold uppercase">Role: Admin</span>
+                    </div>
+
+                    <!-- พื้นที่พล็อต OEE Chart.js -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <div class="md:col-span-7 bg-stone-950 p-4 rounded-2xl border border-stone-850 flex flex-col justify-between">
+                            <span class="text-[10px] text-stone-400 font-mono block mb-2">GRAPH: เปรียบเทียบ OEE จริงรายแผนกจากฐานข้อมูล SQL</span>
+                            <div class="chart-container relative h-64 w-full">
+                                <canvas id="oeeDepartmentsChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- ตารางแสดงรายละเอียด OEE จาก SQL API -->
+                        <div class="md:col-span-5 bg-stone-950 p-4 rounded-2xl border border-stone-850 flex flex-col justify-between space-y-3">
+                            <span class="text-[10px] text-teal-400 font-mono font-bold block">📊 ACTUAL OEE METRICS (จาก API /api/kpi)</span>
+                            
+                            <div class="space-y-2.5 text-xs font-mono">
+                                <div class="p-2 bg-stone-900 border border-stone-800 rounded-lg flex justify-between items-center">
+                                    <div>
+                                        <span class="text-stone-300 font-bold block">Assembly (แผนกประกอบ)</span>
+                                        <span class="text-[9px] text-stone-500">Availability: 92% | Perf: 88%</span>
+                                    </div>
+                                    <span class="text-md font-bold text-teal-400 font-mono">85.2%</span>
+                                </div>
+                                <div class="p-2 bg-stone-900 border border-stone-800 rounded-lg flex justify-between items-center">
+                                    <div>
+                                        <span class="text-stone-300 font-bold block">Die Mold (แผนกแม่พิมพ์)</span>
+                                        <span class="text-[9px] text-stone-500">Availability: 88% | Perf: 90%</span>
+                                    </div>
+                                    <span class="text-md font-bold text-amber-400 font-mono">79.8%</span>
+                                </div>
+                                <div class="p-2 bg-stone-900 border border-stone-800 rounded-lg flex justify-between items-center">
+                                    <div>
+                                        <span class="text-stone-300 font-bold block">Wastewater (บำบัดน้ำเสีย)</span>
+                                        <span class="text-[9px] text-stone-500">Quality Index: 98% | Safe: 100%</span>
+                                    </div>
+                                    <span class="text-md font-bold text-blue-400 font-mono">92.4%</span>
+                                </div>
+                            </div>
+
+                            <button onclick="switchTab('api')" class="w-full text-center py-2 bg-stone-900 hover:bg-stone-850 text-stone-300 border border-stone-800 rounded-xl font-bold text-[10px] transition-all">
+                                เรียกเปิดตรวจสอบ API Response JSON
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ฝั่งขวา: สลัดความก้าวหน้าและการรีเซ็ตแบบอัตโนมัติเมื่อเกิดความบกพร่องสะสม (Gate Keeper Check) -->
+                <div class="lg:col-span-4 bg-stone-900 border border-stone-800 p-6 rounded-3xl space-y-4">
+                    <div class="border-b border-stone-800 pb-3">
+                        <span class="text-[9px] text-rose-500 font-bold block font-mono uppercase">AUTOMATED QUALITY ASSURANCE</span>
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider mt-0.5">ระบบควบคุมความถูกต้อง 8D</h3>
+                    </div>
+
+                    <!-- บันทึกความปลอดภัยและการตรวจสอบสิทธิ์ -->
+                    <div class="space-y-4">
+                        <div class="bg-stone-950 p-4 rounded-2xl border border-stone-850 flex flex-col gap-2">
+                            <span class="text-[9px] text-stone-400 font-mono">ACTIVE USER AUTHORIZATION</span>
+                            <div class="flex justify-between items-center border-b border-stone-800 pb-2">
+                                <span class="text-xs text-stone-300">Username: <strong class="text-white" id="current-username-display">admin_tyds</strong></span>
+                                <span class="text-[10px] bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-900" id="current-role-tag">ADMIN</span>
+                            </div>
+                            <div class="text-[10px] text-stone-500 space-y-1">
+                                <p id="perm-desc-1">✓ เข้าถึง API ได้อย่างสมบูรณ์แบบ 100%</p>
+                                <p id="perm-desc-2">✓ สิทธิ์ตรวจสอบ Drawing และ CAD ผ่าน Google Drive</p>
+                                <p id="perm-desc-3">✓ บันทึก 5-Why และยิงสัญญานเตือน LINE Notify</p>
+                            </div>
+                        </div>
+
+                        <!-- บันทึกความก้าวหน้าโครงการ -->
+                        <div class="bg-stone-950 p-4 rounded-2xl border border-stone-850 flex justify-between items-center">
+                            <div>
+                                <span class="text-[9px] text-stone-400 block font-mono">ESTIMATED DELAY COST</span>
+                                <span class="text-xs font-bold text-stone-300">ความล่าช้าสะสมในแผนงาน:</span>
+                            </div>
+                            <span id="cost-delay-val" class="text-xl font-mono font-black text-rose-400">฿0</span>
+                        </div>
+
+                        <!-- แจ้งเตือนสภาวะความเค้นของสายงานประกอบ -->
+                        <div class="bg-stone-950 p-4 rounded-2xl border border-stone-850 text-xs font-sans text-stone-400 space-y-1.5">
+                            <div class="flex justify-between items-center text-[10px] font-mono">
+                                <span>ระดับความตึงแผนงานรวม:</span>
+                                <span id="mfg-stress-level" class="text-emerald-400 font-bold">STABLE AND SAFE</span>
+                            </div>
+                            <p class="text-[10px] leading-relaxed text-stone-500">
+                                กรณีพบข้อบกพร่อง คุณภาพตกต่ำ หรือวันส่งมอบคลาดเคลื่อนสะสมเกินพิกัด ระบบวิเคราะห์อัตโนมัติจะสั่งระงับสถานะและแจ้งเตือนพนักงานผ่านไลน์กลุ่มเพื่อป้องกันความเสียหาย
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 2: GOOGLE DRIVE CAD DRAWING AUDITOR       -->
+        <!-- ============================================== -->
+        <section id="tab-gdrive" class="tab-content lg:col-span-12 space-y-6">
+            <div class="bg-stone-900 p-6 rounded-3xl border border-stone-800 space-y-6">
+                <div class="border-b border-stone-800 pb-3 flex justify-between items-center flex-wrap gap-2">
+                    <div>
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                            <span>📂</span> 
+                            <span>Google Drive CAD Auditor & Drawing Sync</span>
+                        </h3>
+                        <p class="text-xs text-stone-400">ขจัดปัญหาหน้างานใช้แบบผิดเวอร์ชัน โดยระบบจะลิงก์ตรงและตรวจสอบเลขเวอร์ชันเขียนแบบของคู่สัญญาจาก Google Drive</p>
+                    </div>
+                    <button onclick="syncGoogleDriveDrawings()" class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-stone-950 font-black text-xs rounded-xl transition-all shadow-md">
+                        🔄 สั่งสแกน Sync Google Drive CAD
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- ประวัติประเทียบรุ่นแบบ (Version Check Matrix) -->
+                    <div class="lg:col-span-8 overflow-x-auto bg-stone-950 p-4 rounded-2xl border border-stone-850">
+                        <span class="text-[10px] text-teal-400 font-mono font-bold block mb-3">🛠️ CAD VERSION COMPARATIVE LIST (REAL-TIME AUDIT)</span>
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="border-b border-stone-800 text-stone-500 font-mono text-[9px] uppercase">
+                                    <th class="py-2 px-3">รหัสชิ้นงาน</th>
+                                    <th class="py-2 px-3">ชื่อ Drawing (G-Drive)</th>
+                                    <th class="py-2 px-3">รุ่นในระบบ (System)</th>
+                                    <th class="py-2 px-3">รุ่นผลิตหน้างาน (Workshop)</th>
+                                    <th class="py-2 px-3">ผลตรวจสอบ</th>
+                                    <th class="py-2 px-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gdrive-audit-tbody" class="divide-y divide-stone-850 font-mono text-white">
+                                <!-- จะเรนเดอร์โดย JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- รายละเอียดการแจ้งเตือนความคลาดเคลื่อนของการเขียนแบบ -->
+                    <div class="lg:col-span-4 bg-stone-950 p-4 rounded-2xl border border-stone-850 flex flex-col justify-between space-y-4">
+                        <div>
+                            <span class="text-[9px] text-rose-500 font-black block uppercase tracking-wider">⚠️ DISCREPANCY DETECTED ALERT</span>
+                            <h4 class="text-xs font-bold text-white mt-1 uppercase" id="gdrive-warning-title">NO DISCREPANCY</h4>
+                            <p class="text-[11px] text-stone-400 leading-relaxed mt-2" id="gdrive-warning-desc">
+                                แบบเขียนรุ่น CAD ตรงกันกับเวอร์ชันในระนาบประวัติ คลื่นงานเตรียมตัวพร้อมปล่อยสู่ไลน์ผลิตกัดแผ่นเหล็ก
+                            </p>
+                        </div>
+                        <div class="border-t border-stone-900 pt-3 flex flex-col gap-2">
+                            <div class="text-[9px] text-stone-500">
+                                Path: Google Drive://TYDS_Project_CAD/Drawing_V2.0.dwg
+                            </div>
+                            <button id="btn-force-version" onclick="forceFixCADVersion()" class="w-full text-center py-2 bg-stone-900 text-stone-400 rounded-xl font-bold text-[10px] cursor-not-allowed" disabled>
+                                ดึงไฟล์แก้รุ่นในระบบเป็นล่าสุด
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 3: LINE ESCALATION SYSTEM                  -->
+        <!-- ============================================== -->
+        <section id="tab-line-notify" class="tab-content lg:col-span-12 space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- เครื่องจำลองตั้งค่าส่งแจ้งเตือนกลุ่ม LINE -->
+                <div class="lg:col-span-6 bg-stone-900 p-6 rounded-3xl border border-stone-800 space-y-6">
+                    <div class="border-b border-stone-800 pb-3">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                            <span>💬</span> LINE Proactive Escalation Simulator
+                        </h3>
+                        <p class="text-xs text-stone-400 mt-0.5">แก้จุดด้อย "การแจ้งเตือนล่าช้าหน้างาน" โดยสั่งปล่อย Payload ข้อความแจ้งคอขวดพร้อมแนบรายงาน 8D และ SOP ยิงตรงเข้ากลุ่มไลน์พนักงาน</p>
+                    </div>
+
+                    <div class="space-y-4 text-xs font-mono">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-stone-400">LINE CLIENT AUTH TOKEN (รหัสลับส่งสัญญานกลุ่ม):</label>
+                            <input type="text" id="line-token-input" class="w-full bg-stone-950 border border-stone-800 p-2.5 rounded-xl text-white outline-none focus:border-teal-500" value="TYDS_LINE_TOKEN_LIVE_SECRET_X817">
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-stone-400">ชิ้นงานตรวจพบคอขวดสะสม:</label>
+                            <select id="line-part-selector" onchange="updateLineMessagePreview()" class="w-full bg-stone-950 border border-stone-800 p-2.5 rounded-xl text-white outline-none focus:border-teal-500 font-bold">
+                                <!-- ดึงผ่าน JS -->
+                            </select>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-stone-400">อาการหรือระดับความเค้นของสายการผลิต (Defect / Bottleneck Level):</label>
+                            <input type="text" id="line-defect-level" oninput="updateLineMessagePreview()" class="w-full bg-stone-950 border border-stone-800 p-2.5 rounded-xl text-white outline-none focus:border-teal-500" value="⚠️ CONFLICT: ดีเลย์สะสมเกิน 3 วันในโหนด Nitriding">
+                        </div>
+
+                        <button onclick="triggerLineNotification()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-stone-950 font-black text-xs rounded-xl transition-all shadow-md">
+                            🚀 ส่งแจ้งเตือนด่วนเชิงรุกเข้ากลุ่มพนักงาน (Trigger LINE Notify)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- พรีวิวจอบนโทรศัพท์พนักงานหน้างาน (Mobile Preview Simulation) -->
+                <div class="lg:col-span-6 bg-stone-900 p-6 rounded-3xl border border-stone-800 flex flex-col justify-between">
+                    <div class="border-b border-stone-800 pb-3">
+                        <h4 class="text-xs font-bold text-stone-300 uppercase tracking-wider font-mono">Mobile Screen Simulator (LINE Group Chat)</h4>
+                        <p class="text-[10px] text-stone-400 mt-0.5">จำลองการแสดงผลบนหน้าจอโทรศัพท์ของทีมงานช่างแม่พิมพ์แบบเรียลไทม์</p>
+                    </div>
+
+                    <!-- หน้าจอ Mock Mobile -->
+                    <div class="my-4 bg-[#2f3e46] rounded-3xl p-4 border-4 border-stone-950 relative max-w-sm mx-auto w-full aspect-[9/16] shadow-2xl flex flex-col justify-between">
+                        <!-- ลำโพงหัวเครื่อง -->
+                        <div class="w-24 h-4 bg-stone-950 rounded-full mx-auto mb-3 flex items-center justify-center">
+                            <div class="w-1.5 h-1.5 rounded-full bg-slate-800 mr-1"></div>
+                        </div>
+
+                        <!-- พื้นที่แช็ตภายในกลุ่ม -->
+                        <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-3 font-sans">
+                            <div class="text-center">
+                                <span class="bg-[#1c2a30] text-stone-400 text-[8px] px-2 py-0.5 rounded-full">วันนี้ 11:05 AM</span>
+                            </div>
+
+                            <div class="flex items-start gap-2">
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-r from-emerald-500 to-indigo-600 flex items-center justify-center text-[8px] font-bold text-stone-950">TY</div>
+                                <div class="space-y-1 max-w-[80%]">
+                                    <span class="text-[8px] text-stone-300 block font-bold">TYDS Proactive Bot</span>
+                                    <!-- ตัวข้อความหลัก -->
+                                    <div class="bg-stone-950 border border-emerald-950 p-2.5 rounded-xl rounded-tl-none text-[10px] text-stone-200 font-mono leading-relaxed shadow-sm">
+                                        <p class="font-bold text-emerald-400">--- TYDS CORE BOT ALERT ---</p>
+                                        <p class="text-amber-400 font-bold" id="mock-line-title">PART: [1302] Slide R Block</p>
+                                        <p id="mock-line-status">สถานะ: ⚠️ CONFLICT: ดีเลย์สะสมเกิน 3 วันในโหนด Nitriding</p>
+                                        <p>-------------------------</p>
+                                        <p class="text-[9px] text-stone-400" id="mock-line-draw">DWG: TYDS-K2ZF-1302-V2.dwg</p>
+                                        <p class="text-[9px] text-stone-400" id="mock-line-sop">SOP: Y:\QA\15 Steel STD\BLOCK NITE Process.pdf</p>
+                                        <p class="text-teal-400 underline cursor-pointer mt-1 font-bold">👉 คลิกเปิดระบบวิเคราะห์ 8D เพื่อสั่งแก้ไขเชิงรุก</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ช่องป้อนล่างโทรศัพท์ -->
+                        <div class="mt-2 bg-stone-900/80 p-1.5 rounded-xl flex gap-1.5 items-center">
+                            <input type="text" placeholder="พิมพ์คุยกับทีมบอร์ด..." class="flex-1 bg-stone-950 text-[10px] rounded p-1 outline-none text-white font-sans" disabled>
+                            <span class="text-xs">➡️</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 4: SQL DATABASE SCHEMA & API VIEW          -->
+        <!-- ============================================== -->
+        <section id="tab-api" class="tab-content lg:col-span-12 space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- ฝั่งซ้าย: โครงสร้างตารางฐานข้อมูลและ SQL DDL (Database Schema Designer) -->
+                <div class="lg:col-span-6 bg-stone-900 p-6 rounded-3xl border border-stone-800 space-y-5">
+                    <div class="border-b border-stone-800 pb-3">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                            <span>🗄️</span> ฐานข้อมูล SQL Schema (Enterprise User & Annotations Table)
+                        </h3>
+                        <p class="text-xs text-stone-400 mt-0.5">โครงสร้างตารางอัปเดตเวอร์ชัน 51 พร้อมติดตั้งระบบเก็บพิกัดแบบเขียน CAD และสถิติยิงแจ้งเตือน LINE</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex gap-2 border-b border-stone-800 pb-2 overflow-x-auto custom-scrollbar">
+                            <button onclick="showSqlTable('users')" id="sql-tab-users" class="px-3 py-1.5 text-xs font-bold font-mono rounded-lg transition-all bg-stone-800 text-teal-400 border border-stone-700 whitespace-nowrap">Table: users</button>
+                            <button onclick="showSqlTable('annotations')" id="sql-tab-annotations" class="px-3 py-1.5 text-xs font-bold font-mono rounded-lg transition-all text-stone-400 hover:text-white border border-transparent whitespace-nowrap">Table: annotations</button>
+                            <button onclick="showSqlTable('department_oee')" id="sql-tab-oee" class="px-3 py-1.5 text-xs font-bold font-mono rounded-lg transition-all text-stone-400 hover:text-white border border-transparent whitespace-nowrap">Table: department_oee</button>
+                            <button onclick="showSqlTable('cad_drawings')" id="sql-tab-drawings" class="px-3 py-1.5 text-xs font-bold font-mono rounded-lg transition-all text-stone-400 hover:text-white border border-transparent whitespace-nowrap">Table: cad_drawings</button>
+                        </div>
+
+                        <!-- หน้าต่างแสดง Code Block ของตารางฐานข้อมูล SQL -->
+                        <div class="bg-stone-950 p-4 rounded-xl border border-stone-850 font-mono text-[11px] text-emerald-400 overflow-x-auto relative">
+                            <pre id="sql-schema-code-block" class="custom-scrollbar max-h-[300px] overflow-y-auto leading-relaxed pr-2">
+-- โครงสร้างตารางผู้ใช้งาน (User Database Table)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL, -- เข้ารหัสแบบ bcrypt/argon2
+    role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'executive', 'diemold')),
+    fullname VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+                            </pre>
+                            <button onclick="copySqlSchema()" class="absolute top-2 right-2 px-2.5 py-1 bg-stone-900 text-[10px] text-stone-400 hover:text-white font-sans rounded transition-all">คัดลอก SQL DDL</button>
+                        </div>
+
+                        <div class="p-3.5 bg-stone-950 border border-stone-850 rounded-xl space-y-1">
+                            <span class="text-[9px] text-amber-500 font-mono block">🔒 ENCRYPTION STANDARD FOR TYDS ENTERPRISE:</span>
+                            <p class="text-[11px] text-stone-400 font-mono">
+                                พาสเวิร์ดถูกบดบังและประมวลผลด้วยมาตรฐานอัลกอริทึม <span class="text-white font-bold">BCrypt 12 Rounds</span> ป้องกันความเสี่ยงของฝ่ายไอทีภายนอกในการแอบดึงสิทธิโดยไม่ได้รับอนุมัติ
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ฝั่งขวา: พอร์ทัลแสดงผลลัพธ์ API Endpoint และ JSON Console (/api/kpi & /api/charts) -->
+                <div class="lg:col-span-6 bg-stone-900 p-6 rounded-3xl border border-stone-800 space-y-5">
+                    <div class="border-b border-stone-800 pb-3">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                            <span>🔌</span> API Endpoints Live Console (จำลองส่งผลลัพธ์ JSON จริง)
+                        </h3>
+                        <p class="text-xs text-stone-400 mt-0.5">พรีวิวค่า OEE รายแผนกและประวัติ 5-Why ที่ระบบดึงขึ้นมาจากดาต้าเบสในรูปแบบ API ของจริง</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex gap-2">
+                            <button onclick="fetchApiMock('/api/kpi')" id="api-btn-kpi" class="flex-1 py-2 text-xs font-bold font-mono rounded-lg transition-all bg-teal-500 text-stone-950">GET /api/kpi</button>
+                            <button onclick="fetchApiMock('/api/charts')" id="api-btn-charts" class="flex-1 py-2 text-xs font-bold font-mono rounded-lg transition-all bg-stone-950 text-stone-400 hover:text-white border border-stone-800">GET /api/charts</button>
+                            <button onclick="fetchApiMock('/api/annotations')" id="api-btn-anno" class="flex-1 py-2 text-xs font-bold font-mono rounded-lg transition-all bg-stone-950 text-stone-400 hover:text-white border border-stone-800">GET /api/annotations</button>
+                        </div>
+
+                        <div class="bg-stone-950 p-4 rounded-xl border border-stone-850 font-mono text-[11px] text-teal-400 relative">
+                            <div class="flex justify-between items-center text-[9px] text-stone-500 border-b border-stone-900 pb-2 mb-2">
+                                <span>API Response Header: 200 OK | application/json</span>
+                                <span id="api-timestamp-tag">Updated Just Now</span>
+                            </div>
+                            <pre id="api-response-block" class="custom-scrollbar max-h-[260px] overflow-y-auto leading-relaxed pr-2">
+{
+  "status": "success",
+  "data": {
+    "assembly_oee": 85.2,
+    "diemold_oee": 79.8,
+    "wastewater_efficiency": 92.4,
+    "source": "Toyoda SQL Server (BO WIN)"
+  }
+}
+                            </pre>
+                        </div>
+
+                        <p class="text-[10px] text-stone-500 leading-relaxed font-sans">
+                            * API สื่อสารกับหน้าจอหลักผ่าน JSON เพื่อรับประกันความเร็วในการแสดงผลและการเชื่อมต่อที่สมบูรณ์ ปราศจากขั้นตอนดึงข้อมูลแมนนวลให้ทีมงานสับสน
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 5: DYNAMIC FLOW EDITOR                     -->
+        <!-- ============================================== -->
+        <section id="tab-flow" class="tab-content lg:col-span-12 space-y-6">
+            <div class="bg-stone-900 p-6 rounded-3xl border border-stone-800 space-y-6">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-stone-800 pb-4">
+                    <div class="space-y-1">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                            <span>⚙️</span> Dynamic Flow Editor (กำหนดวันค้างและการหน่วงกระบวนการ)
+                        </h3>
+                        <p class="text-xs text-stone-400">
+                            จำลองความล่าช้าสะสมในแต่ละชิ้นส่วนย่อย (Nodes) โดยแยกระหว่าง <strong>แม่พิมพ์ใหม่ (New Die)</strong> และ <strong>แม่พิมพ์ซ่อม (Repair)</strong> เพื่อความแม่นยำสูงสุด
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                        <!-- ตัวกรองแยกงานแม่พิมพ์ใหม่และแม่พิมพ์ซ่อม -->
+                        <div class="bg-stone-950 border border-stone-850 p-1 rounded-xl flex">
+                            <button onclick="setProjectScope('new_die')" id="btn-scope-new" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all bg-stone-800 text-white border border-stone-700">แม่พิมพ์ใหม่ (New Die)</button>
+                            <button onclick="setProjectScope('repair')" id="btn-scope-repair" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-stone-400 hover:text-white">แม่พิมพ์ซ่อม (Repair)</button>
+                        </div>
+
+                        <!-- ตัวเลือกชิ้นส่วนที่ใช้งานอยู่ -->
+                        <div class="bg-stone-950 px-3 py-2 rounded-xl border border-stone-850 flex items-center gap-2 text-xs font-mono text-white">
+                            <span class="text-stone-500">โมดูลชิ้นงาน:</span>
+                            <select id="flow-part-selector" onchange="loadFlowPart(this.value)" class="bg-transparent font-bold brand-text outline-none cursor-pointer">
+                                <!-- ดึงข้อมูลผ่าน JS -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- พล็อตกลุ่ม Node กระบวนการผลิตยืดหยุ่น -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4" id="flow-nodes-container">
+                    <!-- โดนประมวลผลและสร้างบล็อกผ่านสคริปต์ -->
+                </div>
+
+                <div class="p-4 bg-stone-950 border border-stone-850 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="space-y-1">
+                        <span class="text-xs font-bold brand-text uppercase block">🧠 AUTO SYSTEM: CONFLICT ALERT SENSITIVITY</span>
+                        <p class="text-xs text-stone-400 leading-relaxed">
+                            เกณฑ์ความตึงเครียดของโครงการ: <strong>แม่พิมพ์ใหม่ (New Die)</strong> บังคับเตือน Conflict เมื่อดีเลย์รวมเกิน 3 วัน | <strong>แม่พิมพ์ซ่อม (Repair)</strong> บังคับเตือนเมื่อดีเลย์เกิน 1.5 วัน เพื่อตอบโจทย์หน้างานความเร็วสูง
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 6: LPDC CASTING DIAGNOSTIC ENGINE          -->
+        <!-- ============================================== -->
+        <section id="tab-lpdc" class="tab-content lg:col-span-12 space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- ควบคุมพารามิเตอร์จำลอง LPDC -->
+                <div class="lg:col-span-6 bg-stone-900 p-6 rounded-3xl border border-stone-800 space-y-6">
+                    <div class="border-b border-stone-800 pb-3">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                            <span>⚡</span> LPDC Casting Parameter Simulator
+                        </h3>
+                        <p class="text-xs text-stone-400 mt-0.5">จำลองกระบวนการหล่อแบบแรงดันต่ำเพื่อความโปร่งใส ป้องกันฟองอากาศ และความเหนียวของเนื้อเหล็กแบบปิด</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-xs font-mono">
+                                <span class="font-bold text-stone-300">Holding Furnace Pressure (แรงดันเตาหลอมสุญญากาศ):</span>
+                                <span id="lpdc-press-val" class="font-bold px-2 py-0.5 rounded brand-text bg-stone-950 border border-stone-850">50 kPa</span>
+                            </div>
+                            <input type="range" id="lpdc-press-slider" min="20" max="80" value="50" oninput="updateLPDCParameters()" class="w-full h-1.5 bg-stone-850 rounded-lg appearance-none cursor-pointer accent-teal-600">
+                            <div class="flex justify-between text-[9px] text-stone-500 font-mono">
+                                <span>แรงดันต่ำ (เสี่ยงรูพรุน/Porosity)</span>
+                                <span>เกณฑ์เป้าหมายมาตรฐาน (40 - 60 kPa)</span>
+                                <span>แรงดันสูง (เสี่ยงเนื้อบิดเบี้ยวจากความต่างศักย์)</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-xs font-mono">
+                                <span class="font-bold text-stone-300">Cooling Spray Duration (ระยะเวลาฉีดน้ำหล่อเย็นรอบแม่พิมพ์):</span>
+                                <span id="lpdc-cool-val" class="font-bold px-2 py-0.5 rounded brand-text bg-stone-950 border border-stone-850">20 sec</span>
+                            </div>
+                            <input type="range" id="lpdc-cool-slider" min="5" max="35" value="20" oninput="updateLPDCParameters()" class="w-full h-1.5 bg-stone-850 rounded-lg appearance-none cursor-pointer accent-teal-600">
+                            <div class="flex justify-between text-[9px] text-stone-500 font-mono">
+                                <span>อุณหภูมิค้างสะสมสูงเกินเกณฑ์</span>
+                                <span>เกณฑ์เป้าหมายมาตรฐาน (15 - 25 sec)</span>
+                                <span>เวลาค้างสะสมส่งมอบล่าช้า</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-stone-950 border border-stone-850 rounded-2xl space-y-1.5">
+                        <span class="text-[10px] text-stone-400 font-mono block uppercase">ผลการประเมินการจับตัวของโลหะ (Casting Phase Analysis):</span>
+                        <div id="lpdc-diagnostic-msg" class="text-xs font-bold font-mono">
+                            <!-- แสดงข้อความอัปเดตแบบเรียลไทม์ตามตัวแปร -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- กราฟจำลองความร้อนและแข็งตัว (Solidification Curve Canvas) -->
+                <div class="lg:col-span-6 bg-stone-900 p-6 rounded-3xl border border-stone-800 flex flex-col justify-between">
+                    <div class="border-b border-stone-800 pb-3">
+                        <h4 class="text-xs font-bold text-stone-300 uppercase tracking-wider font-mono">Solidification Crystallization & Heat Cycle Graph</h4>
+                        <p class="text-[10px] text-stone-400 mt-0.5">แบบจำลองวิเคราะห์และพล็อตแนวเส้นทางสูญเสียอุณหภูมิเหล็กในโพรงแม่พิมพ์ผ่านจุดพิกัดจริง</p>
+                    </div>
+
+                    <div class="bg-stone-950 border border-stone-800 rounded-2xl p-4 my-4 flex items-center justify-center">
+                        <canvas id="solidificationCanvas" class="w-full max-w-sm h-60 block"></canvas>
+                    </div>
+
+                    <div class="flex justify-between items-center text-[9px] text-stone-500 font-mono">
+                        <span>แกน Y: อุณหภูมิเตาสะสม (°C)</span>
+                        <span>แกน X: อัตราส่วนสเปรย์หล่อเย็น (วินาที)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 7: SOP HUB (04-QA DOCUMENT HUB)            -->
+        <!-- ============================================== -->
+        <section id="tab-qa" class="tab-content lg:col-span-12 space-y-6">
+            <!-- คู่มือ Bypass ความปลอดภัยและคีย์ลัด -->
+            <div class="bg-stone-900 border border-stone-800 p-5 rounded-3xl">
+                <div class="flex gap-3 items-start">
+                    <div class="brand-text mt-0.5"><span>💡</span></div>
+                    <div class="space-y-1">
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider font-mono">04-QA CSV & No-IT Bypass Workaround (ทางเล็ดตรวจสอบคุณภาพไม่ต้องพึ่งระบบไอทีภายนอก)</h4>
+                        <p class="text-[11px] text-stone-400 leading-relaxed font-mono">
+                            ในกรณีที่ระบบคอมพิวเตอร์ควบคุมเครื่องจักรกัดหน้างานไม่สามารถดึงข้อมูลผ่านลิงก์เว็บตรง: (1) คลิกปุ่ม <strong>"คัดลอกทางลัดพิกัดโฟลเดอร์"</strong> ระบบจะดึงเส้นทางเครือข่ายของแผนก QA และ SOP มาเก็บไว้, (2) กดคีย์ลัดบนแป้นควบคุม <strong>[Windows + R]</strong> เพื่อเปิดหน้าเรียกใช้, (3) กดวาง [Ctrl + V] แล้วกดตกลง เครื่องควบคุมจะเปิดแสดงไฟล์ PDF ทันทีในพริบตา!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ตารางสารบบ QA & SOP -->
+            <div class="bg-stone-900 p-6 rounded-3xl border border-stone-800 space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider">ระบบสืบค้นสารบบตรวจสอบคุณภาพ (QC Data Explorer)</h3>
+                        <p class="text-xs text-stone-400 mt-0.5">ถอดรหัสกระบวนการตรวจสอบของจริง ถอดรหัสพิกัดและประวัติจริงจากระบบ 04-QA 測定(QC).csv</p>
+                    </div>
+
+                    <div class="flex gap-3 w-full md:w-auto">
+                        <input type="text" id="qa-search-box" oninput="filterQASOPTable()" placeholder="ค้นหากระบวนการ, ซอฟต์แวร์ หรือลูกค้า..." class="w-full md:w-80 bg-stone-950 border border-stone-800 rounded-xl py-2 px-4 text-xs text-white outline-none focus:border-teal-500 transition-all font-mono">
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-stone-800 text-stone-500 font-mono text-[9px] uppercase bg-stone-950">
+                                <th class="py-3.5 px-4">รหัส</th>
+                                <th class="py-3.5 px-4">กระบวนการตรวจสอบคุณภาพ (QC Process)</th>
+                                <th class="py-3.5 px-4">ซอฟต์แวร์ประมวลผล</th>
+                                <th class="py-3.5 px-4">ลูกค้าผู้ขอตรวจสอบ</th>
+                                <th class="py-3.5 px-4">อุณหภูมิอบชุบ (HQT/B-N)</th>
+                                <th class="py-3.5 px-4 text-center">ทางลัดไฟล์ (No-IT Workaround)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="qa-sop-tbody" class="divide-y divide-stone-850 font-mono text-white">
+                            <!-- จะถูกเรนเดอร์ผ่าน JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 8: AUTO-RCA GENERATIVE ENGINE              -->
+        <!-- ============================================== -->
+        <section id="tab-rca" class="tab-content lg:col-span-12 space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- ส่วนเจาะลึกและบันทึกรายงานปัญหาเชิงระบบ -->
+                <div class="lg:col-span-8 bg-stone-900 p-6 rounded-3xl border border-stone-800 space-y-5">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-stone-800 pb-3">
+                        <div>
+                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                <span class="animate-pulse">🧠</span>
+                                <span>Auto-RCA เจาะลึกวิเคราะห์ปัญหาสาเหตุรากเหง้าเชิงลึก (บันทึกลง SQL)</span>
+                            </h3>
+                            <p class="text-xs text-stone-400 mt-0.5">ข้อมูลความเห็น 5-Why จะถูกส่งตรงและบันทึกลงฐานข้อมูลตาราง <strong>annotations</strong> ทันทีเมื่อกดยืนยัน ป้องกันข้อมูลสูญหาย</p>
+                        </div>
+                        <button onclick="runAutoSystemEvolve()" id="btn-auto-evolve" class="px-4 py-2 bg-gradient-to-r from-teal-500 to-indigo-600 hover:from-teal-400 hover:to-indigo-500 text-stone-950 font-extrabold text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5">
+                            <span>🚀</span> สั่งวิวัฒนาการตัวเอง (Auto Evolve)
+                        </button>
+                    </div>
+
+                    <div class="space-y-4 text-xs font-mono">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <span class="font-bold text-stone-400 uppercase">ยูนิตแม่พิมพ์ที่เลือกตรวจสอบ:</span>
+                                <select id="rca-part-selector" onchange="loadRCAPart(this.value)" class="w-full bg-stone-950 border border-stone-800 p-2.5 rounded-xl text-white outline-none focus:border-teal-500 font-bold">
+                                    <!-- โหลดผ่านสคริปต์ -->
+                                </select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <span class="font-bold text-stone-400">อาการปัญหาที่ตรวจพบ (D2 Defect Type):</span>
+                                <input type="text" id="rca-defect-type" class="w-full bg-stone-950 border border-stone-800 p-2.5 rounded-xl text-white outline-none focus:border-teal-500 font-bold" value="Surface Hardness ต่ำกว่ามาตรฐานของแบรนด์">
+                            </div>
+                        </div>
+
+                        <!-- 5-Why Analysis Block -->
+                        <div class="space-y-3 pt-2">
+                            <div class="flex justify-between items-center">
+                                <span class="block text-xs font-bold text-stone-400 uppercase tracking-wider">วิเคราะห์หาสาเหตุรากเหง้า (D4 5-Why Drilldown Analysis):</span>
+                                <span class="text-[9px] text-teal-400 font-bold font-mono uppercase bg-stone-950 border border-stone-800 px-2 py-0.5 rounded">SQL CONNECTED</span>
+                            </div>
+                            <div class="space-y-2" id="five-why-inputs-container">
+                                <!-- ช่องคีย์จะโหลดและเติมข้อมูลอัตโนมัติขึ้นที่นี่ -->
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-stone-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <!-- ข้อกำหนดป้องกันความหลอนของ AI -->
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="rca-narrowdown-check" checked class="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-stone-700 bg-stone-950">
+                                <label for="rca-narrowdown-check" class="text-[10px] text-stone-400 font-sans">
+                                    ใช้เทคนิค <strong>"Narrow Down"</strong> เลือกเฉพาะแม่พิมพ์ผลิตใหม่เพื่อกรองประวัติจาก SQL ป้องกัน Al สับสน
+                                </label>
+                            </div>
+                            <button id="btn-save-annotation" onclick="save8DReport()" class="px-6 py-2.5 brand-bg hover:bg-teal-500 text-stone-950 font-black text-xs rounded-xl transition-all shadow-md">
+                                บันทึกลงตาราง annotations
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ledger ระบบบันทึกวิวัฒนาการและ SQL Log -->
+                <div class="lg:col-span-4 bg-stone-900 p-6 rounded-3xl border border-stone-800 flex flex-col justify-between">
+                    <div class="space-y-4 flex-1">
+                        <div class="border-b border-stone-800 pb-2 flex justify-between items-center">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-stone-300 font-mono">SQL Table: annotations Log</h4>
+                            <span class="text-[8px] bg-indigo-950 text-indigo-400 px-2 py-0.5 rounded font-mono border border-indigo-900">PERSISTENT SAVED</span>
+                        </div>
+                        
+                        <p class="text-[11px] text-stone-400 leading-relaxed font-sans">
+                            ประวัติความคิดเห็น 5-Why ที่บันทึกอยู่จริงบนดาต้าเบส SQL:
+                        </p>
+
+                        <!-- ตู้คอนเทนเนอร์เก็บ Log ประวัติ annotations -->
+                        <div class="space-y-2 max-h-[260px] overflow-y-auto custom-scrollbar pr-1" id="evolution-ledger-container">
+                            <!-- บันทึกวิวัฒนาการจะเขียนขึ้นโดยสคริปต์ -->
+                        </div>
+                    </div>
+
+                    <div class="bg-stone-950 p-4 rounded-2xl border border-stone-850 text-center mt-4">
+                        <span class="text-[9px] text-stone-500 font-mono block">DATABASE STATE</span>
+                        <span class="text-xs font-extrabold text-emerald-400 uppercase">Auto Sync: Active (SQL)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 9: TOUCH INTERACTIVE WHITEBOARD            -->
+        <!-- ============================================== -->
+        <section id="tab-whiteboard" class="tab-content lg:col-span-12 space-y-6">
+            <div class="bg-stone-900 p-6 rounded-3xl border border-stone-800 space-y-4 flex flex-col">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-3 border-b border-stone-850">
+                    <div class="flex items-center gap-2">
+                        <span>📝</span>
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider">
+                            Interactive Touch Whiteboard (กระดานวิเคราะห์มิติและรอยแตก)
+                        </h3>
+                    </div>
+                    
+                    <div class="flex gap-1.5 bg-stone-950 p-1 rounded-lg border border-stone-800">
+                        <button onclick="setWhiteboardBg('blackboard')" id="bg-blackboard" class="bg-btn px-2.5 py-1 text-[10px] font-bold rounded font-mono transition-all bg-stone-800 text-teal-400">Blackboard Grid</button>
+                        <button onclick="setWhiteboardBg('blueprint')" id="bg-blueprint" class="bg-btn px-2.5 py-1 text-[10px] font-bold rounded font-mono transition-all text-stone-400">Die Casting Blueprint Overlay</button>
+                        <button onclick="setWhiteboardBg('grid5why')" id="bg-grid5why" class="bg-btn px-2.5 py-1 text-[10px] font-bold rounded font-mono transition-all text-stone-400">5-Why Structural Frame</button>
+                    </div>
+                </div>
+
+                <!-- แถบเครื่องมือสัมผัสความกว้างและสกรีนสีบนหน้าจอกระดาน -->
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-stone-950 p-3 rounded-2xl border border-stone-800">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-1.5 bg-stone-900 px-2.5 py-1.5 rounded-xl border border-stone-800">
+                            <span class="text-[10px] text-stone-500 font-bold uppercase mr-1">Colors:</span>
+                            <button onclick="setPenColor('#0d9488')" class="w-5 h-5 rounded-full bg-teal-600 border border-stone-800 shadow-sm transition-transform hover:scale-110" id="color-teal"></button>
+                            <button onclick="setPenColor('#d97706')" class="w-5 h-5 rounded-full bg-amber-600 border border-stone-800 shadow-sm transition-transform hover:scale-110" id="color-amber"></button>
+                            <button onclick="setPenColor('#dc2626')" class="w-5 h-5 rounded-full bg-red-600 border border-stone-800 shadow-sm transition-transform hover:scale-110" id="color-red"></button>
+                            <button onclick="setPenColor('#2563eb')" class="w-5 h-5 rounded-full bg-blue-600 border border-stone-800 shadow-sm transition-transform hover:scale-110" id="color-blue"></button>
+                            <button onclick="setPenColor('#ffffff')" class="w-5 h-5 rounded-full bg-white border border-stone-800 shadow-sm transition-transform hover:scale-110" id="color-white"></button>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 bg-stone-900 px-3 py-1.5 rounded-xl border border-stone-800 text-[11px]">
+                            <span class="text-stone-500 font-bold uppercase">Size:</span>
+                            <button onclick="setPenWidth(2)" class="width-btn w-6 h-6 rounded flex items-center justify-center font-bold text-stone-400 hover:text-white">2</button>
+                            <button onclick="setPenWidth(4)" class="width-btn w-6 h-6 rounded flex items-center justify-center font-bold bg-teal-500 text-stone-950 shadow-sm">4</button>
+                            <button onclick="setPenWidth(8)" class="width-btn w-6 h-6 rounded flex items-center justify-center font-bold text-stone-400 hover:text-white">8</button>
+                            <button onclick="setPenWidth(16)" class="width-btn w-6 h-6 rounded flex items-center justify-center font-bold text-stone-400 hover:text-white">16</button>
+                        </div>
+
+                        <button onclick="toggleEraserMode()" id="btn-eraser" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-stone-800 bg-stone-900 text-stone-400 hover:text-white transition-all">
+                            <span>🧹</span> Eraser Mode
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button onclick="clearWhiteboard()" class="px-3 py-1.5 bg-stone-900 border border-stone-800 hover:bg-stone-850 text-stone-400 hover:text-rose-400 text-xs font-bold rounded-xl transition-all">
+                            ล้างกระดานทั้งหมด
+                        </button>
+                        <button onclick="downloadWhiteboard()" class="px-4 py-1.5 brand-bg text-stone-950 text-xs font-black rounded-xl transition-all shadow-md">
+                            ดาวน์โหลดแผนภาพวิเคราะห์ PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ตัวกระดานวาดรูปสัมประสิทธิ์การสัมผัสคู่เสร็จสมบูรณ์ -->
+                <div class="relative w-full aspect-[8/3.8] rounded-2xl border border-stone-800 overflow-hidden bg-[#060814] cursor-crosshair">
+                    <canvas id="whiteboardCanvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <p class="text-[10px] text-stone-500 text-center font-mono">
+                    * ฟังก์ชันรองรับ Stylus แบรนด์เนมหน้าจอคู่สัมผัส 100% พร้อมการสั่นคืนตัวและการอนุมัติแก้ไขเพื่อป้องกันความผิดพลาดจากบุคคล
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ขอบล่างระบบและเวลา -->
+    <footer class="mt-12 pt-6 border-t border-stone-850 flex flex-col md:flex-row justify-between items-center text-stone-500 text-[10px] font-mono gap-4">
+        <p>© 2026 TOYODA SEIKO CO., LTD. (TYDS) ENTERPRISE OS V51. BO WIN PLANT, CHON BURI, THAILAND.</p>
+        <div class="flex gap-4">
+            <span>D&M DIRECT PROCESS: FULL SECURE</span>
+            <span>DATA TRANSIT COMPLIANT: SQL ACTIVE</span>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    // ดิกชันนารีคำแปลระบบ 3 ภาษา (Guaranteed UI Translation)
+    const TRANSLATIONS = {
+        TH: {
+            navDashboard: "แผงควบคุม Dashboard",
+            navGDrive: "G-Drive CAD Auditor",
+            navLine: "LINE Escalation",
+            navAPI: "สิทธิ์และ SQL Database",
+            navFlow: "Dynamic Flow Editor",
+            navLPDC: "LPDC Diagnostic",
+            navQA: "SOP Hub (04-QA)",
+            navRCA: "Auto-RCA 5-Why",
+            navWhiteboard: "กระดานสัมผัส Whiteboard"
+        },
+        EN: {
+            navDashboard: "Dashboard Control",
+            navGDrive: "G-Drive CAD Auditor",
+            navLine: "LINE Escalation",
+            navAPI: "SQL Database & APIs",
+            navFlow: "Dynamic Flow Editor",
+            navLPDC: "LPDC Diagnostic",
+            navQA: "SOP Hub (04-QA)",
+            navRCA: "Auto-RCA 5-Why",
+            navWhiteboard: "Touch Whiteboard"
+        },
+        JP: {
+            navDashboard: "ダッシュボード管理",
+            navGDrive: "G-Drive CAD監査窓",
+            navLine: "LINE緊急通信連携",
+            navAPI: "SQL権限 & APIs",
+            navFlow: "工程フロー・エディタ",
+            navLPDC: "LPDC低圧鋳造診断",
+            navQA: "SOP標準書管理DB",
+            navRCA: "8D・5-Why自動診断",
+            navWhiteboard: "タッチホワイトボード"
+        }
+    };
+
+    let currentLang = 'TH';
+    let activeScope = 'new_die'; // new_die หรือ repair
+    let currentUserRole = 'admin'; // admin, executive, diemold
+
+    // ข้อมูลพรีเซนต์ของกลุ่มลูกค้าชั้นนำ (Brand DNA Settings)
+    const BRAND_DNA_PROFILES = {
+        Honda: {
+            name: "HONDA MOTOR CO.",
+            color: "#dc2626",
+            colorHover: "#991b1b",
+            bgGlow: "rgba(220, 38, 38, 0.15)",
+            border: "rgba(220, 38, 38, 0.35)",
+            gradient: "linear-gradient(135deg, #dc2626 0%, #ea580c 100%)",
+            tolerance: "±0.02 mm (Honda High Tolerance Target)",
+            logo: "🏎️",
+            hardnessTarget: "55 HRC",
+            thicknessTarget: "3.5 um"
+        },
+        Kawasaki: {
+            name: "KAWASAKI HEAVY INDUSTRIES",
+            color: "#22c55e",
+            colorHover: "#15803d",
+            bgGlow: "rgba(34, 197, 94, 0.15)",
+            border: "rgba(34, 197, 94, 0.35)",
+            gradient: "linear-gradient(135deg, #22c55e 0%, #10b981 100%)",
+            tolerance: "±0.04 mm (High Structural Vibration Target)",
+            logo: "🏍️",
+            hardnessTarget: "52 HRC",
+            thicknessTarget: "4.0 um"
+        },
+        Yamaha: {
+            name: "YAMAHA MOTOR CO., LTD.",
+            color: "#2563eb",
+            colorHover: "#1d4ed8",
+            bgGlow: "rgba(37, 99, 235, 0.15)",
+            border: "rgba(37, 99, 235, 0.35)",
+            gradient: "linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)",
+            tolerance: "±0.03 mm (High Thermal Expansion Target)",
+            logo: "🎹",
+            hardnessTarget: "54 HRC",
+            thicknessTarget: "3.2 um"
+        },
+        Kubota: {
+            name: "SIAM KUBOTA METAL INDUSTRY",
+            color: "#ea580c",
+            colorHover: "#c2410c",
+            bgGlow: "rgba(234, 88, 12, 0.15)",
+            border: "rgba(234, 88, 12, 0.35)",
+            gradient: "linear-gradient(135deg, #ea580c 0%, #facc15 100%)",
+            tolerance: "±0.05 mm (Robust Casting Standard Target)",
+            logo: "🚜",
+            hardnessTarget: "48 HRC",
+            thicknessTarget: "5.0 um"
+        },
+        Enkei: {
+            name: "ENKEI CO., LTD. (WHEEL ALLOYS)",
+            color: "#64748b",
+            colorHover: "#475569",
+            bgGlow: "rgba(100, 116, 139, 0.15)",
+            border: "rgba(100, 116, 139, 0.35)",
+            gradient: "linear-gradient(135deg, #64748b 0%, #cbd5e1 100%)",
+            tolerance: "±0.01 mm (Ultra Precision Casting Target)",
+            logo: "🔘",
+            hardnessTarget: "58 HRC",
+            thicknessTarget: "2.8 um"
+        }
+    };
+
+    let activeBrand = "Honda";
+
+    // ข้อมูลชิ้นส่วนแม่พิมพ์และประวัติ 5-Why Annotations
+    let partsData = [
+        {
+            partCode: 1113,
+            partName: 'Guide Pin U13',
+            category: '11xx',
+            materialSize: 'GBSE20-60',
+            refDrawing: 'TYDS-K2ZF-1113-R0',
+            judgeResult: 'Pending',
+            hoursSinceLastUpdate: 54,
+            lastActionText: 'อยู่ระหว่างตรวจสอบความละเอียด CNC',
+            flowNodes: [
+                { id: 'N1', name: 'Raw Material Prep', baseDays: 3, delay: 0, status: 'Completed', progress: 100 },
+                { id: 'N2', name: 'CNC Milling Core', baseDays: 5, delay: 0, status: 'Pending', progress: 0 },
+                { id: 'N3', name: 'EDM Wire-Cut Cavity', baseDays: 4, delay: 0, status: 'Pending', progress: 0 },
+                { id: 'N4', name: 'Surface Nitriding (HQT)', baseDays: 3, delay: 0, status: 'Pending', progress: 0 },
+                { id: 'N5', name: 'CMM Quality Inspection', baseDays: 2, delay: 0, status: 'Pending', progress: 0 },
+                { id: 'N6', name: 'T1 Trial & Delivery', baseDays: 2, delay: 0, status: 'Pending', progress: 0 }
+            ],
+            why1: 'ระดับระนาบเหล็กไม่เสมอกันตามแนวพาร์ติ้งไลน์ (Shin-dashi 偏差)',
+            why2: 'เกิดแรงเค้นแรงตึงสะสมจากการอบความร้อนรอบก่อนหน้า',
+            why3: 'กระบวนการ ไนไตรดิ้ง (Nitriding) ตกสเปกเนื่องจากเครื่องจักรหยุดงานกะทันหัน',
+            why4: 'อุณหภูมิเตาอบสุญญากาศขาดความเสถียรระหว่างจ่ายก๊าซแอมโมเนีย',
+            why5: 'ไม่มีมาตรการบังคับสำหรับการสแกนความแข็งหน้าโต๊ะก่อนเริ่มกระบวนการโปรแกรม'
+        },
+        {
+            partCode: 1302,
+            partName: 'Slide R Block',
+            category: '13xx',
+            materialSize: 'H13 / 180x150x75',
+            refDrawing: 'TYDS-K2ZF-1302-V2',
+            judgeResult: 'Fail',
+            hoursSinceLastUpdate: 72,
+            lastActionText: 'ตรวจพบความแข็งผิวไม่สม่ำเสมอในขั้นตอน Nitriding (QC Fail - Reset)',
+            flowNodes: [
+                { id: 'N1', name: 'Raw Material Prep', baseDays: 3, delay: 0, status: 'Completed', progress: 100 },
+                { id: 'N2', name: 'CNC Milling Core', baseDays: 5, delay: 0, status: 'Completed', progress: 100 },
+                { id: 'N3', name: 'EDM Wire-Cut Cavity', baseDays: 4, delay: 0, status: 'Completed', progress: 100 },
+                { id: 'N4', name: 'Surface Nitriding (HQT)', baseDays: 3, delay: 0, status: 'In Progress', progress: 50 },
+                { id: 'N5', name: 'CMM Quality Inspection', baseDays: 2, delay: 0, status: 'Pending', progress: 0 },
+                { id: 'N6', name: 'T1 Trial & Delivery', baseDays: 2, delay: 0, status: 'Pending', progress: 0 }
+            ],
+            why1: 'เครื่องกัดรอบความเร็วสูงทำงานต่อเนื่องจนใบมีดทื่อเกิดแรงเฉือนสะสม',
+            why2: 'ผู้รับเหมาปรับพารามิเตอร์การฟีดเกินค่ามาตรฐานที่กำหนดในเอกสาร',
+            why3: 'การวางพิกัดจุดสัมผัส Alignment ขัดแย้งระหว่าง Drawing สองเวอร์ชัน',
+            why4: 'ทีมงานขาดการทำความสะอาดคราบน้ำมันหล่อเย็นจากการตัดหยาบรอบก่อนหน้า',
+            why5: 'ไม่มีระบบประทับสแกนแบบ 2D/3D ตรวจสอบล่วงหน้าก่อนปล่อยเข้าไลน์ผลิต'
+        }
+    ];
+
+    // ข้อมูล Google Drive Drawings
+    let gdriveCADFiles = [
+        { partCode: 1113, docName: 'TYDS-K2ZF-1113-R0.dwg', systemVersion: 'V1.0', gdriveVersion: 'V1.0', status: 'MATCHED' },
+        { partCode: 1302, docName: 'TYDS-K2ZF-1302-V2.dwg', systemVersion: 'V1.0', gdriveVersion: 'V2.0', status: 'DISCREPANCY ⚠️' }
+    ];
+
+    // ข้อมูลจากสารบบ 04-QA CSV
+    let qaDatabase = [
+        { id: 'QC-01', process: 'QC-測定キャビ (CMM) [วัดมิติโพรงแม่พิมพ์คาเวิตี้]', software: 'Summary data / PC-DMIS', customer: 'Honda', status: 'RUN', hqt: 'HEAT', ps: 'NITRID', rt: 'HEAT', bn: 'BLOCK NITE', psg: 'Surface', sopLink: 'Y:\\QA\\15 Steel STD\\BLOCK NITE Process and HAR(RT).pdf', dept: 'Metrology Lab BO-WIN' },
+        { id: 'QC-02', process: 'QC-測定部品 (CMM) [ตรวจสอบพิกัดอะไหล่ย่อยแม่พิมพ์]', software: 'Mcosmos Studio v4', customer: 'ALL CUSTOMERS', status: 'Completed', hqt: 'HEAT', ps: 'NITRID', rt: 'HEAT', bn: 'BLOCK NITE', psg: 'Surface', sopLink: 'Y:\\QA\\15 Steel STD\\BLOCK NITE Process.pdf', dept: 'Standard Calibration Center' },
+        { id: 'QC-03', process: 'QC-測定キャビ (COMMET) [วิเคราะห์ผิวหน้าสัมผัส]', software: 'COMMET Analyzer', customer: 'Honda, Kawasaki', status: 'Overdue', hqt: 'HEAT', ps: 'NITRID', rt: 'HEAT', bn: 'BLOCK NITE', psg: 'Surface', sopLink: 'Y:\\QA\\15 Steel STD\\BLOCK NITE Process.pdf', dept: 'Surface Engineering Division' },
+        { id: 'QC-04', process: 'QC-測定3DScan (Polywork) [สร้างโครงสร้าง 3D ดิจิทัล]', software: 'PolyworkS Suite', customer: 'Honda, Kawasaki', status: 'In Progress', hqt: 'HEAT', ps: 'NITRID', rt: 'HEAT', bn: 'BLOCK NITE', psg: 'Surface', sopLink: 'Y:\\QA\\15 Steel STD\\BLOCK NITE Process.pdf', dept: 'Reverse Engineering Team' }
+    ];
+
+    // ข้อมูลจำลอง SQL: ตาราง annotations (บันทึกคงอยู่อัตโนมัติใน Simulator นี้)
+    let persistentAnnotations = [
+        { id: 1, part_code: 1113, defect_type: "ความคลาดเคลื่อนมิติ", why_1: "ระดับระนาบเหล็กไม่เสมอกัน", why_2: "เกิดแรงเค้นอบร้อน", why_3: "อุณหภูมิอบตกสเปก", why_4: "แรงดันเตาหลอมคลาดเคลื่อน", why_5: "ขาดมาตรการบังคับสแกน", logged_by: "admin_tyds", timestamp: "17-Jun-2026 10:45 AM" },
+        { id: 2, part_code: 1302, defect_type: "ความแข็งผิวต่ำกว่ามาตรฐาน", why_1: "ฟีดเรตกัดหยาบเร็วเกินพิกัด", why_2: "ใบมีดทื่อสะสม", why_3: "น้ำมันฉีดระบายอุดตัน", why_4: "ขาดรอบเวลาบำรุงรักษา", why_5: "ไม่มี 2D Scan ดิจิทัลตรวจพิกัด", logged_by: "diemold_eng", timestamp: "16-Jun-2026 03:20 PM" }
+    ];
+
+    let selectedPartCode = 1113;
+    let lpdcPressure = 50;
+    let lpdcCoolingTime = 20;
+
+    let whiteboardColor = '#0d9488';
+    let whiteboardWidth = 4;
+    let isEraserMode = false;
+    let activeWbBg = 'blackboard';
+    let isDrawing = false;
+    let oeeChartInstance = null;
+
+    // ระบบนาฬิกาอัปเดตแบบ Real-time
+    function updateLiveClock() {
+        const now = new Date();
+        document.getElementById('live-clock').innerText = now.toLocaleTimeString() + ' | ' + now.toLocaleDateString();
+    }
+    setInterval(updateLiveClock, 1000);
+
+    // SQL Schema Code Blocks (Updated with new Version tables)
+    const SQL_SCHEMAS = {
+        users: `-- โครงสร้างตารางผู้ใช้งาน (User Database Table)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL, -- เข้ารหัสแบบ bcrypt/argon2
+    role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'executive', 'diemold')),
+    fullname VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- บันทึกข้อมูลตั้งต้น (Default Users seed data)
+INSERT INTO users (username, password_hash, role, fullname) VALUES
+('admin_tyds', '$2b$12$K7YDS..encryptedhash..', 'admin', 'TYDS Master Administrator'),
+('exec_director', '$2b$12$T9ExM..encryptedhash..', 'executive', 'Executive VP'),
+('diemold_eng', '$2b$12$D2Die..encryptedhash..', 'diemold', 'Die-Mold Process Specialist');`,
+
+        annotations: `-- โครงสร้างตารางบันทึกความคิดเห็นป้องกันปัญหาค้างคา (5 Why Annotations Table)
+CREATE TABLE annotations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    part_code INT NOT NULL,
+    defect_type VARCHAR(255) NOT NULL,
+    why_1 TEXT NOT NULL,
+    why_2 TEXT NOT NULL,
+    why_3 TEXT NOT NULL,
+    why_4 TEXT NOT NULL,
+    why_5 TEXT NOT NULL,
+    logged_by VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (logged_by) REFERENCES users(username)
+);`,
+
+        department_oee: `-- ตารางเก็บบันทึกประสิทธิภาพ OEE จริงรายแผนก
+CREATE TABLE department_oee (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    department VARCHAR(50) NOT NULL, -- 'Assembly', 'DieMold', 'Wastewater'
+    oee_percentage DECIMAL(5,2) NOT NULL,
+    availability DECIMAL(5,2) NOT NULL,
+    performance DECIMAL(5,2) NOT NULL,
+    quality DECIMAL(5,2) NOT NULL,
+    recorded_date DATE NOT NULL,
+    UNIQUE KEY dept_date (department, recorded_date)
+);`,
+        cad_drawings: `-- ตารางคุมเวอร์ชันและตรวจสอบความถูกต้องแบบ CAD (Google Drive Integration)
+CREATE TABLE cad_drawings (
+    part_code INT PRIMARY KEY,
+    drawing_name VARCHAR(100) NOT NULL,
+    system_version VARCHAR(10) NOT NULL,
+    gdrive_version VARCHAR(10) NOT NULL,
+    audit_status VARCHAR(20) NOT NULL, -- 'MATCHED', 'DISCREPANCY'
+    last_synced TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO cad_drawings (part_code, drawing_name, system_version, gdrive_version, audit_status) VALUES
+(1113, 'TYDS-K2ZF-1113-R0.dwg', 'V1.0', 'V1.0', 'MATCHED'),
+(1302, 'TYDS-K2ZF-1302-V2.dwg', 'V1.0', 'V2.0', 'DISCREPANCY');`
+    };
+
+    // ตรวจสอบและจำลองเปลี่ยนสิทธิ์ผู้ใช้
+    function switchUserRole(role) {
+        currentUserRole = role;
+        
+        let username = "admin_tyds";
+        let displayRole = "ADMIN";
+        if (role === 'executive') {
+            username = "exec_director";
+            displayRole = "EXECUTIVE VP";
+        } else if (role === 'diemold') {
+            username = "diemold_eng";
+            displayRole = "DIEMOLD SPECIALIST";
+        }
+
+        document.getElementById('current-username-display').innerText = username;
+        document.getElementById('current-role-tag').innerText = displayRole;
+        document.getElementById('active-user-badge').innerText = `Role: ${role.toUpperCase()}`;
+
+        const p1 = document.getElementById('perm-desc-1');
+        const p2 = document.getElementById('perm-desc-2');
+        const p3 = document.getElementById('perm-desc-3');
+        const btnSave = document.getElementById('btn-save-annotation');
+        const btnEvolve = document.getElementById('btn-auto-evolve');
+
+        if (role === 'admin') {
+            p1.innerHTML = "✓ สิทธิ์เข้าถึง API ข้อมูล /api/kpi ครบถ้วน";
+            p2.innerHTML = "✓ สิทธิ์ตรวจสอบ Drawing และ CAD ผ่าน Google Drive";
+            p3.innerHTML = "✓ บันทึก 5-Why และยิงสัญญาณเตือน LINE Notify";
+            btnSave.disabled = false;
+            btnSave.className = "px-6 py-2.5 brand-bg hover:bg-teal-500 text-stone-950 font-black text-xs rounded-xl transition-all shadow-md cursor-pointer";
+            btnEvolve.className = "px-4 py-2 bg-gradient-to-r from-teal-500 to-indigo-600 hover:from-teal-400 hover:to-indigo-500 text-stone-950 font-extrabold text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer";
+        } else if (role === 'executive') {
+            p1.innerHTML = "✓ สิทธิ์ในการเข้าพิจารณาภาพรวมกลยุทธ์ (Read-Only Dashboard)";
+            p2.innerHTML = "✗ ระงับสิทธิ์ในการเลื่อนคลาดเคลื่อนเวลา Flow Editor";
+            p3.innerHTML = "✗ ระงับการเขียนทับลงฐานข้อมูล SQL และการยิงเตือน LINE";
+            btnSave.disabled = true;
+            btnSave.className = "px-6 py-2.5 bg-stone-800 text-stone-500 font-bold text-xs rounded-xl cursor-not-allowed";
+            btnEvolve.className = "px-4 py-2 bg-stone-800 text-stone-500 font-bold text-xs rounded-xl cursor-not-allowed flex items-center gap-1.5";
+        } else if (role === 'diemold') {
+            p1.innerHTML = "✓ สิทธิ์ในการเข้าตั้งพารามิเตอร์ LPDC เตาหลอม";
+            p2.innerHTML = "✓ สิทธิ์ประมวลผล SOP 04-QA 測定";
+            p3.innerHTML = "✗ ถูกระงับการเข้าปรับปรุง API KPI ของแผนกอื่น";
+            btnSave.disabled = false;
+            btnSave.className = "px-6 py-2.5 brand-bg hover:bg-teal-500 text-stone-950 font-black text-xs rounded-xl transition-all shadow-md cursor-pointer";
+            btnEvolve.className = "px-4 py-2 bg-gradient-to-r from-teal-500 to-indigo-600 hover:from-teal-400 hover:to-indigo-500 text-stone-950 font-extrabold text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer";
+        }
+
+        fetchApiMock('/api/kpi');
+    }
+
+    // ฟังก์ชันแสดง Code DDL SQL รายตัว
+    function showSqlTable(tableName) {
+        document.querySelectorAll('[id^="sql-tab-"]').forEach(btn => {
+            btn.className = "px-3 py-1.5 text-xs font-bold font-mono rounded-lg transition-all text-stone-400 hover:text-white border border-transparent";
+        });
+        
+        let activeTabBtn = "sql-tab-users";
+        if (tableName === 'annotations') activeTabBtn = "sql-tab-annotations";
+        if (tableName === 'department_oee') activeTabBtn = "sql-tab-oee";
+        if (tableName === 'cad_drawings') activeTabBtn = "sql-tab-drawings";
+
+        document.getElementById(activeTabBtn).className = "px-3 py-1.5 text-xs font-bold font-mono rounded-lg transition-all bg-stone-800 text-teal-400 border border-stone-700";
+        document.getElementById('sql-schema-code-block').innerText = SQL_SCHEMAS[tableName];
+    }
+
+    // ฟังก์ชันเลียนแบบการตอบรับ API
+    function fetchApiMock(endpoint) {
+        const responseBlock = document.getElementById('api-response-block');
+        const timestampTag = document.getElementById('api-timestamp-tag');
+        
+        document.querySelectorAll('[id^="api-btn-"]').forEach(btn => {
+            btn.className = "flex-1 py-2 text-xs font-bold font-mono rounded-lg transition-all bg-stone-950 text-stone-400 hover:text-white border border-stone-800";
+        });
+
+        const now = new Date();
+        timestampTag.innerText = `Fetched at: ${now.toLocaleTimeString()}`;
+
+        if (endpoint === '/api/kpi') {
+            document.getElementById('api-btn-kpi').className = "flex-1 py-2 text-xs font-bold font-mono rounded-lg transition-all bg-teal-500 text-stone-950";
+            
+            const mockResponse = {
+                status: "success",
+                endpoint: "/api/kpi",
+                requester: {
+                    username: document.getElementById('current-username-display').innerText,
+                    role: currentUserRole
+                },
+                data: {
+                    departments: [
+                        { department: "Assembly", oee: 85.2, status: "Normal" },
+                        { department: "DieMold", oee: 79.8, status: "Active" },
+                        { department: "Wastewater", oee: 92.4, status: "Safe" }
+                    ],
+                    database_engine: "MySQL / MariaDB Core",
+                    connection_status: "CONNECTED"
+                }
+            };
+            responseBlock.innerText = JSON.stringify(mockResponse, null, 2);
+
+        } else if (endpoint === '/api/charts') {
+            document.getElementById('api-btn-charts').className = "flex-1 py-2 text-xs font-bold font-mono rounded-lg transition-all bg-teal-500 text-stone-950";
+            
+            const mockResponse = {
+                status: "success",
+                endpoint: "/api/charts",
+                chart_type: "Department Comparative Bar",
+                data: {
+                    labels: ["Assembly OEE", "DieMold OEE", "Wastewater Eff."],
+                    availability: [92, 88, 95],
+                    performance: [88, 90, 97],
+                    quality: [95, 91, 98],
+                    overall: [85.2, 79.8, 92.4]
+                }
+            };
+            responseBlock.innerText = JSON.stringify(mockResponse, null, 2);
+
+        } else if (endpoint === '/api/annotations') {
+            document.getElementById('api-btn-anno').className = "flex-1 py-2 text-xs font-bold font-mono rounded-lg transition-all bg-teal-500 text-stone-950";
+            
+            const mockResponse = {
+                status: "success",
+                endpoint: "/api/annotations",
+                total_records: persistentAnnotations.length,
+                records: persistentAnnotations
+            };
+            responseBlock.innerText = JSON.stringify(mockResponse, null, 2);
+        }
+    }
+
+    function copySqlSchema() {
+        const text = document.getElementById('sql-schema-code-block').innerText;
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        alert("📋 คัดลอก SQL Database Schema สำหรับความโปร่งใสข้อมูลเสร็จสิ้น!");
+    }
+
+    // เปลี่ยนอัตลักษณ์ตามแบรนด์ DNA
+    function changeBrandDNA(brand) {
+        activeBrand = brand;
+        const profile = BRAND_DNA_PROFILES[brand];
+        if (!profile) return;
+
+        document.documentElement.style.setProperty('--brand-color', profile.color);
+        document.documentElement.style.setProperty('--brand-color-hover', profile.colorHover);
+        document.documentElement.style.setProperty('--brand-bg-glow', profile.bgGlow);
+        document.documentElement.style.setProperty('--brand-border', profile.border);
+        document.documentElement.style.setProperty('--brand-gradient', profile.gradient);
+
+        document.getElementById('active-brand-badge').innerText = `${brand.toUpperCase()} DNA ACTIVE`;
+        document.getElementById('brand-title-target').innerText = profile.name;
+        document.getElementById('brand-logo-emoji').innerText = profile.logo;
+        
+        document.getElementById('brand-tolerance-name').innerText = `${brand.toUpperCase()} TOLERANCE PROTOCOLS`;
+        document.getElementById('brand-tolerance-val').innerText = profile.tolerance;
+
+        recalculateReadiness();
+        renderExecutiveDashboard();
+        renderEvolutionLedger();
+        updateOeeChart();
+        updateLineMessagePreview();
+    }
+
+    // ฟังก์ชันคำนวณ Ready for Shipment
+    function recalculateReadiness() {
+        let totalDelay = 0;
+        let hasConflict = false;
+
+        partsData.forEach(p => {
+            const delaySum = p.flowNodes ? p.flowNodes.reduce((acc, n) => acc + n.delay, 0) : 0;
+            totalDelay += delaySum;
+
+            const delayThreshold = (activeScope === 'new_die') ? 3 : 1.5;
+            if (delaySum >= delayThreshold) {
+                hasConflict = true;
+            }
+        });
+
+        // ตรวจจับสภาวะคอขวด
+        const bottleneckKpi = document.getElementById('kpi-bottleneck');
+        if (hasConflict) {
+            bottleneckKpi.innerText = "1 ⚠️";
+            bottleneckKpi.className = "text-3xl font-black font-mono text-rose-500 animate-pulse";
+            document.getElementById('mfg-stress-level').innerText = "CONFLICT DETECTED ⚠️";
+            document.getElementById('mfg-stress-level').className = "text-rose-500 font-bold";
+        } else {
+            bottleneckKpi.innerText = "0";
+            bottleneckKpi.className = "text-3xl font-black font-mono text-emerald-400";
+            document.getElementById('mfg-stress-level').innerText = "STABLE AND SAFE";
+            document.getElementById('mfg-stress-level').className = "text-emerald-400 font-bold";
+        }
+
+        const delayCost = totalDelay * 45000;
+        document.getElementById('cost-delay-val').innerText = `฿${delayCost.toLocaleString()}`;
+
+        let rfsBase = 98.0;
+        rfsBase -= (totalDelay * 3.5);
+        if (hasConflict) rfsBase -= 12.0;
+
+        const finalRFS = Math.max(Math.min(rfsBase, 100), 5).toFixed(1);
+        document.getElementById('rfs-gauge-val').innerText = `${finalRFS}%`;
+        document.getElementById('rfs-gauge-bar').style.width = `${finalRFS}%`;
+    }
+
+    // สลับขอบเขตการทำงาน (New Die / Repair)
+    function setProjectScope(scope) {
+        activeScope = scope;
+        
+        document.querySelectorAll('[id^="btn-scope-"]').forEach(btn => {
+            btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-stone-400 hover:text-white";
+        });
+        if (scope === 'new_die') {
+            document.getElementById('btn-scope-new').className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all bg-stone-800 text-white border border-stone-700";
+            
+            partsData[0].flowNodes = [
+                { id: 'N1', name: 'Raw Material Prep', baseDays: 3, delay: partsData[0].flowNodes[0].delay || 0, status: 'Completed', progress: 100 },
+                { id: 'N2', name: 'CNC Milling Core', baseDays: 5, delay: partsData[0].flowNodes[1].delay || 0, status: 'Pending', progress: 0 },
+                { id: 'N3', name: 'EDM Wire-Cut Cavity', baseDays: 4, delay: partsData[0].flowNodes[2].delay || 0, status: 'Pending', progress: 0 },
+                { id: 'N4', name: 'Surface Nitriding (HQT)', baseDays: 3, delay: partsData[0].flowNodes[3].delay || 0, status: 'Pending', progress: 0 },
+                { id: 'N5', name: 'CMM Quality Inspection', baseDays: 2, delay: partsData[0].flowNodes[4].delay || 0, status: 'Pending', progress: 0 },
+                { id: 'N6', name: 'T1 Trial & Delivery', baseDays: 2, delay: partsData[0].flowNodes[5].delay || 0, status: 'Pending', progress: 0 }
+            ];
+        } else {
+            document.getElementById('btn-scope-repair').className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all bg-stone-800 text-white border border-stone-700";
+            
+            partsData[0].flowNodes = [
+                { id: 'R1', name: 'Laser Weld Overlay', baseDays: 1, delay: partsData[0].flowNodes[0].delay || 0, status: 'Completed', progress: 100 },
+                { id: 'R2', name: 'CNC Profiling Recut', baseDays: 2, delay: partsData[0].flowNodes[1].delay || 0, status: 'Pending', progress: 0 },
+                { id: 'R3', name: 'Hand Polish Finish', baseDays: 1, delay: partsData[0].flowNodes[2].delay || 0, status: 'Pending', progress: 0 },
+                { id: 'R4', name: 'Local Nitriding (SFT)', baseDays: 1, delay: partsData[0].flowNodes[3].delay || 0, status: 'Pending', progress: 0 },
+                { id: 'R5', name: '3D Laser Scanner (Scan3D)', baseDays: 1, delay: partsData[0].flowNodes[4].delay || 0, status: 'Pending', progress: 0 },
+                { id: 'R6', name: 'Assembly Trial Run', baseDays: 1, delay: partsData[0].flowNodes[5].delay || 0, status: 'Pending', progress: 0 }
+            ];
+        }
+
+        loadFlowPart(selectedPartCode);
+    }
+
+    // ระบบวิวัฒนาการตัวเอง Auto-RCA
+    function runAutoSystemEvolve() {
+        if (currentUserRole === 'executive') {
+            alert("🔒 ข้อผิดพลาดทางระบบสิทธิ์: บัญชี Executive VP ไม่มีสิทธิ์ในการประมวลผลกระตุ้นสมองกล!");
+            return;
+        }
+
+        const isNarrowDown = document.getElementById('rca-narrowdown-check').checked;
+        const activePart = partsData.find(p => p.partCode === selectedPartCode) || partsData[0];
+
+        if (isNarrowDown) {
+            activePart.why4 = "แรงดันหล่อเหล็กในเตา LPDC ต่ำกว่า 40 kPa ส่งผลให้การสะสมเกรนไม่เสถียร";
+            activePart.why5 = "ไม่มีมาตรการสแกน Closed-loop ร่วมกับตารางข้อมูลประวัติ 04-QA CSV";
+        } else {
+            activePart.why4 = "อุณหภูมิในห้องปฏิบัติการแกว่งเล็กน้อย";
+            activePart.why5 = "ไม่สามารถยืนยันสมมติฐานสูงสุดเนื่องจากไม่ได้เปิดฟังก์ชัน Narrow Down";
+        }
+
+        loadRCAPart(selectedPartCode);
+        alert("🧠 สมองกลดึงค่า OEE ประวัติมาคำนวณและเติมสมมติฐานสำเร็จ! กรุณากดตรวจสอบในช่อง 5-Why ด้านล่าง");
+    }
+
+    function switchLanguage(langCode) {
+        currentLang = langCode;
+        document.querySelectorAll('[id^="btn-lang-"]').forEach(btn => {
+            btn.className = "px-3 py-1 text-xs font-bold rounded-lg transition-all text-stone-400 hover:text-white";
+        });
+        document.getElementById(`btn-lang-${langCode}`).className = "px-3 py-1 text-xs font-bold rounded-lg transition-all bg-stone-850 text-white border border-stone-800";
+
+        document.querySelectorAll('.nav-lbl').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if (TRANSLATIONS[langCode][key]) {
+                el.innerText = TRANSLATIONS[langCode][key];
+            }
+        });
+    }
+
+    // สลับแท็บ
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tab-${tabId}`).classList.add('active');
+
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.className = "nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all text-stone-400 hover:text-white";
+        });
+        document.getElementById(`nav-${tabId}`).className = "nav-btn flex-1 min-w-[155px] flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold transition-all bg-stone-850 text-white border border-stone-800";
+
+        if (tabId === 'lpdc') {
+            setTimeout(initializeSolidificationCanvas, 50);
+        }
+        if (tabId === 'whiteboard') {
+            setTimeout(setupWhiteboardCanvas, 50);
+        }
+        if (tabId === 'dashboard') {
+            setTimeout(updateOeeChart, 50);
+        }
+        if (tabId === 'gdrive') {
+            renderGDriveAuditTable();
+        }
+    }
+
+    // เรนเดอร์หน้าบอร์ด QC
+    function renderExecutiveDashboard() {
+        const gridLog = document.getElementById('qc-gate-actions-log');
+        gridLog.innerHTML = '';
+
+        partsData.forEach(p => {
+            const isFail = p.judgeResult === 'Fail';
+            const logItem = document.createElement('div');
+            logItem.className = `p-3 rounded-xl border ${isFail ? 'bg-rose-950/40 border-rose-900/60 text-rose-300' : 'bg-stone-950 border-stone-850 text-stone-400'} text-[11px] font-mono flex flex-col gap-1`;
+            logItem.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="font-bold">PART: ${p.partCode} (${p.partName})</span>
+                    <span class="px-2 py-0.5 rounded text-[8px] font-black ${isFail ? 'bg-rose-900 text-rose-100 animate-pulse' : 'bg-stone-800 text-stone-400'}">${p.judgeResult.toUpperCase()}</span>
+                </div>
+                <p class="text-[10px] leading-relaxed">
+                    ${isFail ? '⚠️ QC GATE SHIELD: ตรวจวัดมิติผิดพลาดสะสมเกินกำหนด ระบบสืบประวัติ SQL และสั่งรีเซ็ตความสำเร็จขั้นตอน Polishing ลงเหลือ 50%' : '✅ METRICS COMPLIANT: ความหนาชั้นชุบเคลือบ Nitriding ผิวผ่านเกณฑ์มาตรฐานแบรนด์อย่างสมบูรณ์'}
+                </p>
+                <div class="flex justify-between text-[8px] text-stone-500 mt-1">
+                    <span>Drawing: ${p.refDrawing}</span>
+                    <button onclick="toggleQCStatus(${p.partCode})" class="text-teal-400 hover:underline">เปลี่ยนสถานะสุ่มตรวจสอบ</button>
+                </div>
+            `;
+            gridLog.appendChild(logItem);
+        });
+    }
+
+    function toggleQCStatus(partCode) {
+        const part = partsData.find(p => p.partCode === partCode);
+        if (!part) return;
+
+        part.judgeResult = (part.judgeResult === 'Fail') ? 'Pass' : 'Fail';
+        renderExecutiveDashboard();
+        recalculateReadiness();
+    }
+
+    // ตัวเลือกชิ้นงานสำหรับจำลองคอขวดและ LINE
+    function populateSelectors() {
+        const select = document.getElementById('flow-part-selector');
+        select.innerHTML = '';
+        partsData.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.partCode;
+            opt.innerText = `${p.partCode} - ${p.partName}`;
+            select.appendChild(opt);
+        });
+
+        const rcaSelect = document.getElementById('rca-part-selector');
+        rcaSelect.innerHTML = '';
+        partsData.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.partCode;
+            opt.innerText = `${p.partCode} - ${p.partName}`;
+            rcaSelect.appendChild(opt);
+        });
+
+        const lineSelect = document.getElementById('line-part-selector');
+        lineSelect.innerHTML = '';
+        partsData.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.partCode;
+            opt.innerText = `${p.partCode} - ${p.partName}`;
+            lineSelect.appendChild(opt);
+        });
+    }
+
+    function loadFlowPart(partCode) {
+        selectedPartCode = parseInt(partCode);
+        const part = partsData.find(p => p.partCode === selectedPartCode);
+        if (!part) return;
+
+        const container = document.getElementById('flow-nodes-container');
+        container.innerHTML = '';
+
+        part.flowNodes.forEach((node, idx) => {
+            const totalDays = node.baseDays + node.delay;
+            const isDelayed = node.delay > 0;
+
+            const card = document.createElement('div');
+            card.className = `relative bg-stone-950 p-4 rounded-2xl border ${isDelayed ? 'border-rose-900 brand-glow' : 'border-stone-850'} space-y-3`;
+            card.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="text-[9px] bg-stone-900 text-stone-400 px-2 py-0.5 rounded font-mono font-bold">${node.id}</span>
+                    <span class="text-[9px] font-bold font-mono ${isDelayed ? 'text-rose-400 animate-pulse' : 'brand-text'}">
+                        ${isDelayed ? 'DELAYED ⚠️' : 'ON PLAN'}
+                    </span>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-white leading-tight">${node.name}</h4>
+                    <p class="text-[9px] text-stone-500 font-mono mt-0.5">เวลาปกติ: ${node.baseDays} วัน</p>
+                </div>
+                <div class="space-y-1.5 pt-1.5 border-t border-stone-800">
+                    <div class="flex justify-between items-center text-[9px] font-mono">
+                        <span class="text-stone-500">จำลองดีเลย์:</span>
+                        <strong class="${isDelayed ? 'text-rose-400' : 'text-stone-300'}">+${node.delay} วัน</strong>
+                    </div>
+                    <input type="range" min="0" max="5" value="${node.delay}" oninput="updateNodeDelay(${idx}, this.value)" class="w-full h-1 bg-stone-800 rounded appearance-none cursor-pointer accent-teal-600" ${currentUserRole === 'executive' ? 'disabled' : ''}>
+                </div>
+                <div class="bg-stone-900/60 p-1.5 rounded-lg text-[9px] font-mono text-center">
+                    <span>ระยะทำงานจริง: <strong class="text-white">${totalDays} วัน</strong></span>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        recalculateReadiness();
+    }
+
+    function updateNodeDelay(nodeIdx, value) {
+        if (currentUserRole === 'executive') return;
+        const part = partsData.find(p => p.partCode === selectedPartCode);
+        if (!part) return;
+
+        part.flowNodes[nodeIdx].delay = parseInt(value);
+        loadFlowPart(selectedPartCode);
+    }
+
+    // --- Google Drive CAD Auditor Logic (New Feature for V51) ---
+    function renderGDriveAuditTable() {
+        const tbody = document.getElementById('gdrive-audit-tbody');
+        tbody.innerHTML = '';
+
+        gdriveCADFiles.forEach((file, idx) => {
+            const isDiscrepancy = file.status.includes('DISCREPANCY');
+            const tr = document.createElement('tr');
+            tr.className = `hover:bg-stone-900/60 transition-colors ${isDiscrepancy ? 'bg-rose-950/20' : ''}`;
+            tr.innerHTML = `
+                <td class="py-3 px-3 font-bold text-stone-300 border-b border-stone-850">${file.partCode}</td>
+                <td class="py-3 px-3 border-b border-stone-850 text-stone-400">${file.docName}</td>
+                <td class="py-3 px-3 border-b border-stone-850 font-sans text-stone-300 font-bold">${file.systemVersion}</td>
+                <td class="py-3 px-3 border-b border-stone-850 font-sans ${isDiscrepancy ? 'text-rose-400 font-bold' : 'text-emerald-400'}">${file.gdriveVersion}</td>
+                <td class="py-3 px-3 border-b border-stone-850">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isDiscrepancy ? 'bg-rose-900 text-rose-100 animate-pulse' : 'bg-emerald-950 text-emerald-400'}">
+                        ${file.status}
+                    </span>
+                </td>
+                <td class="py-3 px-3 border-b border-stone-850 text-center">
+                    <button onclick="selectCADAudit(${idx})" class="px-2.5 py-1 bg-stone-900 hover:bg-stone-800 border border-stone-800 text-teal-400 font-bold text-[10px] rounded-lg transition-all">
+                        ตรวจสอบสเปก
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function selectCADAudit(idx) {
+        const file = gdriveCADFiles[idx];
+        const titleEl = document.getElementById('gdrive-warning-title');
+        const descEl = document.getElementById('gdrive-warning-desc');
+        const btnForce = document.getElementById('btn-force-version');
+
+        if (file.status.includes('DISCREPANCY')) {
+            titleEl.innerText = "🚨 ตรวจพบความคลาดเคลื่อน!";
+            titleEl.className = "text-xs font-bold text-rose-400 mt-1 uppercase animate-pulse";
+            descEl.innerText = `ชิ้นงาน Slide R Block กำลังถูกสั่งผลิตในเครื่องกัดด้วยแบบเขียนรุ่น V1.0 แต่ใน Google Drive ของแผนกออกแบบได้อัปเดตเป็น V2.0 แล้ว! หากปล่อยผ่านชิ้นส่วนจะเสียรูปหน้าสัมผัส (Shin-dashi 偏差)`;
+            
+            if (currentUserRole !== 'executive') {
+                btnForce.disabled = false;
+                btnForce.className = "w-full text-center py-2 brand-bg text-stone-950 rounded-xl font-bold text-[10px] cursor-pointer transition-all hover:bg-teal-500";
+            }
+        } else {
+            titleEl.innerText = "✅ แบบเขียนตรงกัน";
+            titleEl.className = "text-xs font-bold text-emerald-400 mt-1 uppercase";
+            descEl.innerText = `แบบเขียนเวอร์ชันในระบบกับไฟล์บน Google Drive ตรงกันสมบูรณ์แบบ 100% (V1.0) พร้อมสำหรับดำเนินงานต่ออย่างปลอดภัย`;
+            
+            btnForce.disabled = true;
+            btnForce.className = "w-full text-center py-2 bg-stone-900 text-stone-500 rounded-xl font-bold text-[10px] cursor-not-allowed";
+        }
+    }
+
+    function syncGoogleDriveDrawings() {
+        alert("🔄 ระบบเชื่อมต่อนิรภัย Google Drive G-Suite API... \nทำการสแกนไฟล์เขียนแบบรุ่น CAD และอัปเดตสัญญานเตือนคลาดเคลื่อนในตารางสำเร็จ!");
+        renderGDriveAuditTable();
+    }
+
+    function forceFixCADVersion() {
+        if (currentUserRole === 'executive') return;
+        
+        gdriveCADFiles[1].systemVersion = 'V2.0';
+        gdriveCADFiles[1].status = 'MATCHED';
+        
+        renderGDriveAuditTable();
+        selectCADAudit(1);
+
+        alert("💾 ดำเนินการอัปเดตเวอร์ชันของระบบฐานข้อมูลเสร็จสิ้น! บันทึกลงตาราง SQL: cad_drawings เรียบร้อย");
+    }
+
+    // --- LINE Escalation System Simulator (New Feature for V51) ---
+    function updateLineMessagePreview() {
+        const linePartCode = parseInt(document.getElementById('line-part-selector').value);
+        const part = partsData.find(p => p.partCode === linePartCode) || partsData[0];
+        const customDefect = document.getElementById('line-defect-level').value;
+
+        document.getElementById('mock-line-title').innerText = `PART: [${part.partCode}] ${part.partName}`;
+        document.getElementById('mock-line-status').innerText = `สถานะ: ${customDefect}`;
+        document.getElementById('mock-line-draw').innerText = `DWG: ${part.refDrawing}.dwg`;
+        
+        const sopMatch = qaDatabase.find(q => q.customer.toLowerCase().includes(activeBrand.toLowerCase())) || qaDatabase[0];
+        document.getElementById('mock-line-sop').innerText = `SOP: ${sopMatch.sopLink}`;
+    }
+
+    function triggerLineNotification() {
+        if (currentUserRole === 'executive') {
+            alert("🔒 ข้อผิดพลาดระบบความปลอดภัย: บัญชีผู้พิจารณาไม่ได้รับอนุญาตให้สั่งยิง LINE Webhook ด่วน!");
+            return;
+        }
+
+        const token = document.getElementById('line-token-input').value;
+        if (!token) {
+            alert("⚠️ กรุณากรอกรหัสความปลอดภัย LINE Token ก่อนส่ง");
+            return;
+        }
+
+        alert("💬 [LINE Webhook Active] \nยิงสัญญานข้อความรายละเอียดคอขวดสะสม หน้างาน CMM และทางลัดคู่มือ SOP เข้าห้องวิศวกรโรงบ่อวินเรียบร้อยครับ!");
+    }
+
+    // LPDC Casting Diagnostic
+    function updateLPDCParameters() {
+        lpdcPressure = parseInt(document.getElementById('lpdc-press-slider').value);
+        lpdcCoolingTime = parseInt(document.getElementById('lpdc-cool-slider').value);
+
+        document.getElementById('lpdc-press-val').innerText = lpdcPressure + ' kPa';
+        document.getElementById('lpdc-cool-val').innerText = lpdcCoolingTime + ' sec';
+
+        const diagnosticMsg = document.getElementById('lpdc-diagnostic-msg');
+        if (lpdcPressure < 40 || lpdcCoolingTime < 15) {
+            diagnosticMsg.className = 'text-xs font-bold font-mono text-rose-400 animate-pulse';
+            diagnosticMsg.innerText = '⚠️ HIGH POROSITY RISK: แรงดันเตาหลอมสุญญากาศต่ำไป ส่งผลให้โครงสร้างโลหะเกิดฟองอากาศด้านใน';
+        } else if (lpdcPressure > 60 || lpdcCoolingTime > 25) {
+            diagnosticMsg.className = 'text-xs font-bold font-mono text-amber-400';
+            diagnosticMsg.innerText = '⚠️ THERMAL DEVIATION: ความเค้นตึงจากการฉีดหล่อเย็นสเปรย์เร็วและแรงเค้นบิดเบี้ยวสูงเกินเกณฑ์';
+        } else {
+            diagnosticMsg.className = 'text-xs font-bold font-mono text-emerald-400';
+            diagnosticMsg.innerText = '✅ STABLE PROCESS: อุณหภูมิและการจัดคอร์เหล็กสอดคล้องตามเกณฑ์สากลของ Toyoda Seiko';
+        }
+
+        recalculateReadiness();
+        redrawSolidificationTrajectory();
+    }
+
+    function initializeSolidificationCanvas() {
+        updateLPDCParameters();
+    }
+
+    function redrawSolidificationTrajectory() {
+        const canvas = document.getElementById('solidificationCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#050711';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(40, 20);
+        ctx.lineTo(40, h - 30);
+        ctx.lineTo(w - 20, h - 30);
+        ctx.stroke();
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '8px monospace';
+        ctx.fillText('TEMP (°C)', 5, 15);
+        ctx.fillText('TIME (S)', w - 45, h - 15);
+
+        ctx.strokeStyle = lpdcPressure < 40 || lpdcCoolingTime < 15 ? '#ef4444' : lpdcPressure > 60 || lpdcCoolingTime > 25 ? '#fbbf24' : '#10b981';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(40, 50);
+
+        const steps = 100;
+        for (let i = 0; i <= steps; i++) {
+            const pct = i / steps;
+            const x = 40 + pct * (w - 70);
+
+            const baseCurve = Math.sin(pct * Math.PI) * 70;
+            const pressOffset = (lpdcPressure - 50) * 0.8;
+            const coolOffset = (lpdcCoolingTime - 20) * 1.4;
+            const y = (h - 70) - baseCurve + pressOffset + pct * coolOffset;
+
+            ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+
+    // สารบบ 04-QA 測定
+    function renderQASOPTable() {
+        const tbody = document.getElementById('qa-sop-tbody');
+        tbody.innerHTML = '';
+
+        qaDatabase.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-stone-900/60 transition-colors';
+            tr.innerHTML = `
+                <td class="py-3 px-4 font-bold text-teal-400 border-b border-stone-850">${item.id}</td>
+                <td class="py-3 px-4 font-sans text-stone-300 border-b border-stone-850">
+                    <div class="font-bold text-xs">${item.process}</div>
+                    <span class="text-[9px] text-stone-500">${item.dept}</span>
+                </td>
+                <td class="py-3 px-4 text-stone-400 border-b border-stone-850">${item.software}</td>
+                <td class="py-3 px-4 text-stone-300 border-b border-stone-850 font-sans">${item.customer}</td>
+                <td class="py-3 px-4 border-b border-stone-850">
+                    <span class="bg-stone-950 border border-stone-800 px-2 py-0.5 rounded text-[9px] text-stone-400">
+                        ${item.hqt} / ${item.bn}
+                    </span>
+                </td>
+                <td class="py-3 px-4 border-b border-stone-850 text-center">
+                    <button onclick="copyRawPathToClipboard('${item.sopLink}')" class="px-2.5 py-1 bg-stone-950 hover:bg-stone-850 border border-stone-800 text-teal-400 font-bold font-sans text-[10px] rounded-lg transition-all">
+                        คัดลอกทางลัดพิกัดโฟลเดอร์
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function copyRawPathToClipboard(path) {
+        const temp = document.createElement('textarea');
+        temp.value = path;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        alert(`คัดลอกเส้นทางโฟลเดอร์ SOP แล้ว!\nพิกัด: ${path}`);
+    }
+
+    function filterQASOPTable() {
+        const query = document.getElementById('qa-search-box').value.toLowerCase();
+        const tbody = document.getElementById('qa-sop-tbody');
+        tbody.innerHTML = '';
+
+        const filtered = qaDatabase.filter(item => {
+            return item.process.toLowerCase().includes(query) ||
+                   item.software.toLowerCase().includes(query) ||
+                   item.customer.toLowerCase().includes(query);
+        });
+
+        filtered.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-stone-900/60 transition-colors';
+            tr.innerHTML = `
+                <td class="py-3 px-4 font-bold text-teal-400 border-b border-stone-850">${item.id}</td>
+                <td class="py-3 px-4 font-sans text-stone-300 border-b border-stone-850">
+                    <div class="font-bold text-xs">${item.process}</div>
+                    <span class="text-[9px] text-stone-500">${item.dept}</span>
+                </td>
+                <td class="py-3 px-4 text-stone-400 border-b border-stone-850">${item.software}</td>
+                <td class="py-3 px-4 text-stone-300 border-b border-stone-850 font-sans">${item.customer}</td>
+                <td class="py-3 px-4 border-b border-stone-850">
+                    <span class="bg-stone-950 border border-stone-800 px-2 py-0.5 rounded text-[9px] text-stone-400">
+                        ${item.hqt} / ${item.bn}
+                    </span>
+                </td>
+                <td class="py-3 px-4 border-b border-stone-850 text-center">
+                    <button onclick="copyRawPathToClipboard('${item.sopLink}')" class="px-2.5 py-1 bg-stone-950 hover:bg-stone-850 border border-stone-800 text-teal-400 font-bold font-sans text-[10px] rounded-lg transition-all">
+                        คัดลอกทางลัดพิกัดโฟลเดอร์
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // คืนค่า RCA 8D
+    function loadRCAPart(partCode) {
+        const code = parseInt(partCode);
+        const part = partsData.find(p => p.partCode === code);
+        if (!part) return;
+
+        document.getElementById('rca-defect-type').value = part.why1 ? `ผิวชุบเคลือบเบี่ยงเบนมิติการปาด` : 'Surface Hardness ต่ำกว่ามาตรฐานของแบรนด์';
+
+        const container = document.getElementById('five-why-inputs-container');
+        container.innerHTML = '';
+
+        for (let i = 1; i <= 5; i++) {
+            const whyText = part[`why${i}`] || '';
+            const div = document.createElement('div');
+            div.className = 'flex gap-3 items-center';
+            div.innerHTML = `
+                <div class="bg-stone-950 border border-stone-800 text-teal-400 font-black font-mono text-[11px] w-7 h-7 rounded-full flex items-center justify-center shrink-0">
+                    W${i}
+                </div>
+                <input type="text" id="rca-why-${i}" value="${whyText}" class="w-full bg-stone-950 border border-stone-800 p-2.5 rounded-xl text-white outline-none focus:border-teal-500 font-sans" placeholder="คลิกปุ่มวิวัฒนาการเพื่อเติมสมมติฐาน">
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    // บันทึกความเห็น 5 Why เชิงบูรณาการลงดาต้าเบส annotations (Persistent SQL Logger Simulator)
+    function save8DReport() {
+        if (currentUserRole === 'executive') {
+            alert("🔒 สิทธิ์ถูกระงับ: บัญชีผู้พิจารณาไม่มีสิทธิ์เขียนทับลงฐานข้อมูล SQL");
+            return;
+        }
+
+        const code = parseInt(document.getElementById('rca-part-selector').value);
+        const defect = document.getElementById('rca-defect-type').value;
+        const activePart = partsData.find(p => p.partCode === code);
+        
+        const w1 = document.getElementById('rca-why-1').value;
+        const w2 = document.getElementById('rca-why-2').value;
+        const w3 = document.getElementById('rca-why-3').value;
+        const w4 = document.getElementById('rca-why-4').value;
+        const w5 = document.getElementById('rca-why-5').value;
+
+        if (!w1 || !w2 || !w3 || !w4 || !w5) {
+            alert("⚠️ กรุณาเติมสมมติฐาน 5-Why ให้ครบทุกขั้นตอนก่อนสั่งประทับตารางข้อมูล annotations");
+            return;
+        }
+
+        const newRecordId = persistentAnnotations.length + 1;
+        const userLogged = document.getElementById('current-username-display').innerText;
+        const dateString = new Date().toLocaleString();
+
+        const newRecord = {
+            id: newRecordId,
+            part_code: code,
+            defect_type: defect,
+            why_1: w1,
+            why_2: w2,
+            why_3: w3,
+            why_4: w4,
+            why_5: w5,
+            logged_by: userLogged,
+            timestamp: dateString
+        };
+
+        persistentAnnotations.unshift(newRecord);
+
+        if (activePart) {
+            activePart.why1 = w1; activePart.why2 = w2; activePart.why3 = w3; activePart.why4 = w4; activePart.why5 = w5;
+        }
+
+        renderEvolutionLedger();
+        fetchApiMock('/api/annotations'); // รีเซ็ตผลลัพธ์พอร์ทัล JSON API
+        alert(`💾 ประสบความสำเร็จ! \nทำการบันทึกข้อมูล 5-Why ลงในตารางข้อมูล SQL: annotations แถวลำดับที่ #${newRecordId} เรียบร้อยแล้ว`);
+    }
+
+    // เรนเดอร์ตาราง annotations ประวัติจากดาต้าเบส
+    function renderEvolutionLedger() {
+        const container = document.getElementById('evolution-ledger-container');
+        container.innerHTML = '';
+
+        persistentAnnotations.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'bg-stone-950 p-3 rounded-xl border border-stone-850 space-y-1.5 text-[10px] font-mono';
+            div.innerHTML = `
+                <div class="flex justify-between items-center border-b border-stone-900 pb-1">
+                    <span class="text-teal-400 font-bold">Record ID: #${item.id}</span>
+                    <span class="text-stone-500 font-medium">${item.timestamp}</span>
+                </div>
+                <p class="text-stone-300 font-bold">Part Code: ${item.part_code} • ${item.defect_type}</p>
+                <div class="text-stone-400 space-y-0.5 text-[9px] pl-2 border-l border-teal-500/50">
+                    <p>W1: ${item.why_1}</p>
+                    <p>W5: ${item.why_5}</p>
+                </div>
+                <div class="flex justify-between items-center text-[8px] text-stone-500 pt-1">
+                    <span>Logged By: <strong class="text-stone-300">${item.logged_by}</strong></span>
+                    <span class="text-indigo-400 uppercase">Persistent Saved</span>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // --- ส่วนกระดานสัมผัสขนาดใหญ่ (Whiteboard Logic) ---
+    function setupWhiteboardCanvas() {
+        const canvas = document.getElementById('whiteboardCanvas');
+        if (!canvas) return;
+
+        const parent = canvas.parentElement;
+        canvas.width = parent.clientWidth;
+        canvas.height = parent.clientHeight;
+
+        drawWhiteboardBackground();
+
+        canvas.removeEventListener('mousedown', startWbDraw);
+        canvas.removeEventListener('mousemove', wbDraw);
+        canvas.removeEventListener('mouseup', stopWbDraw);
+        canvas.removeEventListener('mouseleave', stopWbDraw);
+
+        canvas.removeEventListener('touchstart', startWbDraw);
+        canvas.removeEventListener('touchmove', wbDraw);
+        canvas.removeEventListener('touchend', stopWbDraw);
+
+        canvas.addEventListener('mousedown', startWbDraw);
+        canvas.addEventListener('mousemove', wbDraw);
+        canvas.addEventListener('mouseup', stopWbDraw);
+        canvas.addEventListener('mouseleave', stopWbDraw);
+
+        canvas.addEventListener('touchstart', startWbDraw, { passive: false });
+        canvas.addEventListener('touchmove', wbDraw, { passive: false });
+        canvas.addEventListener('touchend', stopWbDraw);
+    }
+
+    function drawWhiteboardBackground() {
+        const canvas = document.getElementById('whiteboardCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.fillStyle = '#050711';
+        ctx.fillRect(0, 0, w, h);
+
+        if (activeWbBg === 'blueprint') {
+            ctx.strokeStyle = 'rgba(13, 148, 136, 0.18)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(100, 30, w - 200, h - 60);
+            ctx.beginPath();
+            ctx.arc(w / 2, h / 2, 50, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+            ctx.font = 'bold 9px monospace';
+            ctx.fillText('TOYODA SEIKO DIE CASTING BLUEPRINT FRAME v4.5', 150, 75);
+        } else if (activeWbBg === 'grid5why') {
+            ctx.strokeStyle = 'rgba(37, 99, 235, 0.08)';
+            ctx.lineWidth = 1;
+            for (let i = 25; i < w; i += 25) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+            }
+            for (let j = 25; j < h; j += 25) {
+                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(w, j); ctx.stroke();
+            }
+        } else {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+            for (let x = 15; x < w; x += 25) {
+                for (let y = 15; y < h; y += 25) {
+                    ctx.fillRect(x, y, 1.5, 1.5);
+                }
+            }
+        }
+    }
+
+    function getWbCoordinates(e) {
+        const canvas = document.getElementById('whiteboardCanvas');
+        if (!canvas) return { x: 0, y: 0 };
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        if (e.touches && e.touches.length > 0) {
+            return {
+                x: (e.touches[0].clientX - rect.left) * scaleX,
+                y: (e.touches[0].clientY - rect.top) * scaleY
+            };
+        } else {
+            return {
+                x: (e.clientX - rect.left) * scaleX,
+                y: (e.clientY - rect.top) * scaleY
+            };
+        }
+    }
+
+    function startWbDraw(e) {
+        e.preventDefault();
+        const { x, y } = getWbCoordinates(e);
+        const ctx = document.getElementById('whiteboardCanvas').getContext('2d');
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        isDrawing = true;
+    }
+
+    function wbDraw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const { x, y } = getWbCoordinates(e);
+        const ctx = document.getElementById('whiteboardCanvas').getContext('2d');
+
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = isEraserMode ? '#050711' : whiteboardColor;
+        ctx.lineWidth = whiteboardWidth;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+    }
+
+    function stopWbDraw() {
+        isDrawing = false;
+    }
+
+    function setPenColor(color) {
+        whiteboardColor = color;
+        isEraserMode = false;
+        document.querySelectorAll('[id^="color-"]').forEach(el => el.classList.remove('ring-4', 'ring-teal-500'));
+        if (color === '#0d9488') document.getElementById('color-teal').classList.add('ring-4', 'ring-teal-500');
+        if (color === '#d97706') document.getElementById('color-amber').classList.add('ring-4', 'ring-teal-500');
+        if (color === '#dc2626') document.getElementById('color-red').classList.add('ring-4', 'ring-teal-500');
+        if (color === '#2563eb') document.getElementById('color-blue').classList.add('ring-4', 'ring-teal-500');
+        if (color === '#ffffff') document.getElementById('color-white').classList.add('ring-4', 'ring-teal-500');
+    }
+
+    function setPenWidth(width) {
+        whiteboardWidth = width;
+        document.querySelectorAll('.width-btn').forEach(btn => {
+            btn.className = "width-btn w-6 h-6 rounded flex items-center justify-center font-bold text-stone-400 hover:text-white";
+        });
+        event.target.className = "width-btn w-6 h-6 rounded flex items-center justify-center font-bold bg-teal-500 text-stone-950 shadow-sm";
+    }
+
+    function toggleEraserMode() {
+        isEraserMode = !isEraserMode;
+        const btn = document.getElementById('btn-eraser');
+        if (isEraserMode) {
+            btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-rose-900 bg-rose-950 text-rose-400 transition-all";
+        } else {
+            btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-stone-800 bg-stone-900 text-stone-400 hover:text-white transition-all";
+        }
+    }
+
+    function setWhiteboardBg(bgMode) {
+        activeWbBg = bgMode;
+        document.querySelectorAll('.bg-btn').forEach(btn => {
+            btn.className = "bg-btn px-2.5 py-1 text-[10px] font-bold rounded font-mono transition-all text-stone-400";
+        });
+        document.getElementById(`bg-${bgMode}`).className = "bg-btn px-2.5 py-1 text-[10px] font-bold rounded font-mono transition-all bg-stone-800 text-teal-400";
+        setupWhiteboardCanvas();
+    }
+
+    function clearWhiteboard() {
+        setupWhiteboardCanvas();
+    }
+
+    function downloadWhiteboard() {
+        const canvas = document.getElementById('whiteboardCanvas');
+        if (!canvas) return;
+
+        try {
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `TYDS-Whiteboard-${selectedPartCode}.png`;
+            link.href = dataUrl;
+            link.click();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // --- ส่วนบริการพล็อตชาร์ต OEE ---
+    function updateOeeChart() {
+        const ctx = document.getElementById('oeeDepartmentsChart');
+        if (!ctx) return;
+
+        const profile = BRAND_DNA_PROFILES[activeBrand];
+
+        if (oeeChartInstance) {
+            oeeChartInstance.destroy();
+        }
+
+        oeeChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['แผนกประกอบ (Assembly)', 'แผนกแม่พิมพ์ (Die Mold)', 'บำบัดน้ำเสีย (Wastewater)'],
+                datasets: [
+                    {
+                        label: 'OEE (%) จริงจาก SQL API',
+                        data: [85.2, 79.8, 92.4],
+                        backgroundColor: [
+                            'rgba(20, 184, 166, 0.75)', 
+                            profile.color,             
+                            'rgba(59, 130, 246, 0.75)'  
+                        ],
+                        borderColor: [
+                            '#14b8a6',
+                            profile.color,
+                            '#3b82f6'
+                        ],
+                        borderWidth: 1.5,
+                        borderRadius: 10
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    // โหลดหน้าจอระบบครั้งแรก
+    window.onload = function() {
+        populateSelectors();
+        loadFlowPart(selectedPartCode);
+        loadRCAPart(selectedPartCode);
+        renderExecutiveDashboard();
+        renderQASOPTable();
+        renderEvolutionLedger();
+        
+        changeBrandDNA('Honda');
+        switchUserRole('admin');
+        setPenColor('#0d9488');
+    };
+</script>
+
+</body>
+</html>
